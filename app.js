@@ -31,6 +31,18 @@ const upload = multer({
 app.use(express.json({ limit: '10mb' }));
 app.use('/uploads', express.static(UPLOAD_DIR));
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/competitions', (req, res) => {
+  res.redirect('/competitions.html');
+});
+
+app.get('/competitions.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'competitions.html'));
+});
+
 // Serve static files (so GET / returns index.html)
 app.use(express.static(path.join(__dirname)));
 
@@ -166,35 +178,52 @@ app.post('/api/vote/initiate', async (req, res) => {
 });
 
 app.get('/api/vote/callback', async (req, res) => {
-  const reference = Array.isArray(req.query.reference)
+  const rawReference = Array.isArray(req.query.reference)
     ? req.query.reference[0]
-    : (req.query.reference || (Array.isArray(req.query.trxref) ? req.query.trxref[0] : req.query.trxref));
+    : req.query.reference;
+  const rawTrxref = Array.isArray(req.query.trxref) ? req.query.trxref[0] : req.query.trxref;
+  const reference = rawReference || rawTrxref;
 
   if (!reference) {
     console.error('❌ Vote callback missing reference in query:', req.query);
     return res.status(400).send('Missing payment reference.');
   }
 
-  try {
-    const response = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
+  const verifyReference = async (ref) => {
+    const verifyResponse = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(ref)}`, {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
       },
     });
+    const verifyData = await verifyResponse.json();
+    return { verifyResponse, verifyData };
+  };
 
-    const data = await response.json();
+  try {
+    console.log('➡️ Paystack callback query:', req.query);
 
-    if (!response.ok || !data.status) {
-      console.error('❌ Paystack verify error:', data);
+    let { verifyResponse, verifyData } = await verifyReference(reference);
+
+    if ((!verifyResponse.ok || !verifyData.status) && rawTrxref && rawTrxref !== reference) {
+      console.warn('⚠️ Paystack verify failed with reference, retrying trxref:', rawTrxref, verifyData);
+      ({ verifyResponse, verifyData } = await verifyReference(rawTrxref));
+    }
+
+    if (!verifyResponse.ok || !verifyData.status) {
+      console.error('❌ Paystack verify error:', verifyData);
       return res.status(500).send('Payment verification failed.');
     }
 
-    if (data.data?.status !== 'success') {
-      console.warn('⚠️ Paystack payment not successful yet:', data.data?.status);
+    if (verifyData.data?.status !== 'success') {
+      console.warn('⚠️ Paystack payment not successful yet:', verifyData.data?.status);
       return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>Payment not completed</h2><p>Your payment could not be verified yet.</p><a href="/competitions.html" style="color:#d4af37;">Try again</a></body></html>');
     }
 
-    const metadata = typeof data.data.metadata === 'string' ? JSON.parse(data.data.metadata || '{}') : data.data.metadata || {};
+    const metadata = typeof verifyData.data.metadata === 'string'
+      ? JSON.parse(verifyData.data.metadata || '{}')
+      : verifyData.data.metadata || {};
     const participantId = Number(metadata.participantId);
     const quantity = Number(metadata.quantity) || 0;
 
