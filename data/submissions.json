@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1784647587647,
+    "receivedAt": "2026-07-21T15:26:27.641Z",
+    "category": "Content Creator of the Year",
+    "name": "Samson Chi",
+    "department": "Computer Science",
+    "level": "100",
+    "imageName": "WhatsApp Image 2026-06-13 at 4.16.46 PM.jpeg",
+    "reason": "Just Testing"
+  },
+  {
+    "id": 1784647764553,
+    "receivedAt": "2026-07-21T15:29:24.545Z",
+    "category": "Most Social Student of the Year",
+    "name": "Samson Chi",
+    "department": "Computer Science",
+    "level": "100",
+    "imageName": "WhatsApp Image 2026-06-13 at 4.16.46 PM.jpeg",
+    "reason": "Why"
+  },
+  {
+    "id": 1784647853041,
+    "receivedAt": "2026-07-21T15:30:53.038Z",
+    "category": "Most Inspiring Online Personality",
+    "name": "Samson Chi",
+    "department": "Computer Science",
+    "level": "100",
+    "imageName": "WhatsApp Image 2026-06-13 at 4.16.46 PM.jpeg",
+    "reason": "sss"
+  }
+]

@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masked Affairs - CUM & MINGLE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Righteous&family=Space+Grotesk:wght@400;500;600;700&family=Fredoka+One&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%), 
+                        url('masked-affairs-bg.png') center/cover fixed no-repeat;
+            color: #e8e8e8;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ============ HEADER ============ */
+        .header {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .logo-subtitle {
+            font-size: 13px;
+            letter-spacing: 2px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .organization-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: #888;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 600;
+        }
+
+        .org-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .org-item::before {
+            content: '•';
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .org-item:first-child::before {
+            content: '';
+        }
+
+        .university-name {
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* ============ HERO SECTION ============ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(40px);
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(50px);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .event-header {
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 15px;
+            font-weight: 700;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .main-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(52px, 12vw, 160px);
+            font-weight: 400;
+            letter-spacing: 8px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #f0e68c 50%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            font-style: normal;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            letter-spacing: 3px;
+            text-transform: capitalize;
+            color: #b8b8b8;
+            margin-bottom: 50px;
+            font-weight: 700;
+            font-family: 'Righteous', sans-serif;
+            font-style: normal;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 50px;
+            text-align: left;
+        }
+
+        .meta-item {
+            padding: 15px;
+            border-left: 2px solid #d4af37;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+        }
+
+        .meta-value {
+            font-size: 28px;
+            color: #d4af37;
+            font-weight: 700;
+            letter-spacing: 3px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .event-info {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            margin-bottom: 50px;
+        }
+
+        .dress-code {
+            font-size: 16px;
+            letter-spacing: 2px;
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-family: 'Bebas Neue', sans-serif;
+            font-weight: 700;
+        }
+
+        .no-mask-warning {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ff6b6b;
+            letter-spacing: 2px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        /* ============ PRICING SECTION ============ */
+        .pricing-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        .price-card {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(212, 175, 55, 0.05) 100%);
+            border: 2px solid #d4af37;
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .price-card:hover {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+        }
+
+        .price-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+        }
+
+        .price-amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #d4af37;
+            letter-spacing: 3px;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        /* ============ CTA BUTTONS ============ */
+        .cta-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 50px;
+        }
+
+        .btn {
+            padding: 16px 40px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 2px solid #d4af37;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 700;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Bebas Neue', sans-serif;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #d4af37;
+            z-index: -1;
+            transition: left 0.3s ease;
+        }
+
+        .btn-primary {
+            color: #d4af37;
+            background: transparent;
+        }
+
+        .btn-primary::before {
+            left: -100%;
+        }
+
+        .btn-primary:hover {
+            color: #0a0a0a;
+            left: 0;
+        }
+
+        .btn-primary:hover::before {
+            left: 0;
+        }
+
+        .btn-secondary {
+            color: #0a0a0a;
+            background: #d4af37;
+            border-color: #d4af37;
+        }
+
+        .btn-secondary:hover {
+            background: #f0e68c;
+            border-color: #f0e68c;
+            transform: scale(1.05);
+        }
+
+        /* ============ MODAL STYLES ============ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1414 0%, #0f0f0f 100%);
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 28px;
+            color: #d4af37;
+            cursor: pointer;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 38px;
+            color: #d4af37;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            font-style: normal;
+            font-weight: 700;
+        }
+
+        /* ============ FORM STYLES ============ */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 10px;
+            font-family: 'Oswald', sans-serif;
+            font-weight: 700;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid #d4af37;
+            border-radius: 4px;
+            color: #e8e8e8;
+            font-size: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #f0e68c;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #666;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 1px solid #d4af37;
+            border-radius: 4px;
+            color: #e8e8e8;
+            font-size: 14px;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            background: rgba(212, 175, 55, 0.1);
+            border-color: #f0e68c;
+        }
+
+        .form-select option {
+            background: #1a1414;
+            color: #e8e8e8;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 2px dashed #d4af37;
+            border-radius: 4px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #d4af37;
+            font-weight: 500;
+        }
+
+        .file-input-label:hover {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .file-input-label.has-file {
+            border-style: solid;
+            border-color: #4caf50;
+            color: #4caf50;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* ============ CATEGORY SELECTION ============ */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .category-option {
+            padding: 15px;
+            background: rgba(212, 175, 55, 0.05);
+            border: 2px solid #d4af37;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #e8e8e8;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 500;
+        }
+
+        .category-option:hover {
+            background: rgba(212, 175, 55, 0.15);
+            transform: translateX(5px);
+        }
+
+        .category-option.selected {
+            background: #d4af37;
+            color: #0a0a0a;
+            font-weight: 600;
+        }
+
+        .category-section {
+            margin-bottom: 20px;
+        }
+
+        .category-section-title {
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #d4af37;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* ============ ANIMATIONS ============ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 24px;
+            }
+
+            .organization-info {
+                gap: 10px;
+                font-size: 11px;
+            }
+
+            .main-title {
+                font-size: clamp(36px, 8vw, 60px);
+            }
+
+            .event-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .cta-container {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .modal-content {
+                padding: 25px;
+            }
+
+            .modal-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 20px 15px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logo-subtitle {
+                font-size: 10px;
+            }
+
+            .organization-info {
+                flex-direction: column;
+                gap: 8px;
+                font-size: 10px;
+            }
+
+            .org-item {
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 20px 15px;
+            }
+
+            .main-title {
+                font-size: 36px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
+
+            .price-card {
+                min-width: 120px;
+            }
+
+            .price-amount {
+                font-size: 22px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .categories-grid {
+                max-height: 200px;
+            }
+        }
+
+        /* Scrollbar styling */
+        .categories-grid::-webkit-scrollbar,
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .categories-grid::-webkit-scrollbar-track,
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .categories-grid::-webkit-scrollbar-thumb,
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 4px;
+        }
+
+        .categories-grid::-webkit-scrollbar-thumb:hover,
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #f0e68c;
+        }
+
+        /* Success state */
+        .success-message {
+            display: none;
+            padding: 20px;
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4caf50;
+            border-radius: 4px;
+            color: #4caf50;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .stage-title {
+            font-size: 18px;
+            color: #d4af37;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            font-family: 'Righteous', sans-serif;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+        <div class="logo">UN</div>
+        <div class="logo-subtitle">Unsaid Production</div>
+        
+        <div class="organization-info">
+            <div class="org-item">Office of the Director of Socials</div>
+        </div>
+        
+        <div class="organization-info" style="margin-bottom: 12px;">
+            <div class="org-item">CSC (Unsaid)</div>
+            <div class="org-item">BCH (CONFIDENCE)</div>
+            <div class="org-item">MME (BU-KING)</div>
+            <div class="org-item">URP (INVESTOR VIBES)</div>
+        </div>
+        
+        <div class="university-name">Federal University of Technology, Owerri</div>
+    </header>
+
+    <!-- ============ HERO SECTION ============ -->
+    <section class="hero">
+        <div class="hero-content">
+            
+            <h1 class="main-title">Masked Affairs</h1>
+            
+            <div class="subtitle">CUM and MINGLE</div>
+
+            <div class="event-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Red Carpet</div>
+                    <div class="meta-value">8PM</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Main Event</div>
+                    <div class="meta-value">10PM</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Date</div>
+                    <div class="meta-value">15 AUG 2026</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Venue</div>
+                    <div class="meta-value">SOPS THEATRE</div>
+                </div>
+            </div>
+
+            <div class="event-info">
+                <div class="dress-code">Dress Code: MASK</div>
+                <div class="no-mask-warning">NO MASK • NO ENTRY!</div>
+            </div>
+
+            <div class="pricing-container">
+                <div class="price-card">
+                    <div class="price-label">Regular</div>
+                    <div class="price-amount">₦3K</div>
+                </div>
+                <div class="price-card">
+                    <div class="price-label">VIP</div>
+                    <div class="price-amount">₦7K</div>
+                </div>
+                <div class="price-card">
+                    <div class="price-label">Table for 4</div>
+                    <div class="price-amount">₦50K</div>
+                </div>
+                <div class="price-card">
+                    <div class="price-label">Table for 6</div>
+                    <div class="price-amount">₦70K</div>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <button class="btn btn-secondary" id="buyTicketBtn">Buy Ticket</button>
+                <button class="btn btn-primary" id="enterCompetitionBtn">Enter Competition</button>
+                 <button class="btn btn-secondary" id="checkCompetitionsBtn">Vote</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ BUY TICKET MODAL ============ -->
+    <div class="modal" id="ticketModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('ticketModal')">&times;</button>
+            <h2 class="modal-title">Get Your Ticket</h2>
+            
+            <form id="ticketForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" placeholder="your@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="+234 800 000 0000" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ticket Type</label>
+                    <select class="form-select" required>
+                        <option value="">Select ticket type</option>
+                        <option value="regular">Regular - ₦3,000</option>
+                        <option value="vip">VIP - ₦7,000</option>
+                        <option value="table4">Table for 4 - ₦50,000</option>
+                        <option value="table6">Table for 6 - ₦70,000</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Number of Tickets</label>
+                    <input type="number" class="form-control" min="1" value="1" required>
+                </div>
+
+                <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 20px;">
+                    Proceed to Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ COMPETITION ENTRY MODAL - STAGE 1: CATEGORY SELECTION ============ -->
+    <div class="modal" id="competitionModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('competitionModal')">&times;</button>
+            <h2 class="modal-title" id="modalStageTitle">Select Category</h2>
+            
+            <!-- Stage 1: Category Selection -->
+            <div id="stage1" class="competition-stage">
+                <p class="stage-title">Choose the category you want to participate in:</p>
+                <div class="categories-grid" id="categoriesGrid"></div>
+                <button class="btn btn-secondary" id="nextStageBtn" style="width: 100%; margin-top: 20px;" disabled>
+                    Next
+                </button>
+            </div>
+
+            <!-- Stage 2: Entry Form -->
+            <div id="stage2" class="competition-stage" style="display: none;">
+                <form id="competitionForm">
+                    <div class="form-group">
+                        <label class="form-label">Name or Brand Name</label>
+                        <input type="text" class="form-control" id="participantName" placeholder="Your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" id="participantDept" placeholder="Your department or faculty" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Level</label>
+                        <select class="form-select" id="participantLevel" required>
+                            <option value="">Select your level</option>
+                            <option value="100">100 Level</option>
+                            <option value="200">200 Level</option>
+                            <option value="300">300 Level</option>
+                            <option value="400">400 Level</option>
+                            <option value="500">500 Level</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Upload Photo</label>
+                        <div class="file-input-wrapper">
+                            <label class="file-input-label" id="fileLabel">
+                                Click to upload or drag and drop
+                                <br><small style="color: #888;">(PNG, JPG, GIF up to 5MB)</small>
+                            </label>
+                            <input type="file" id="fileInput" name="image" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Why Should You Win?</label>
+                        <textarea class="form-control" id="participantReason" placeholder="Tell us why you deserve to win this award..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-primary" id="backStageBtn" style="flex: 1;">
+                            Back
+                        </button>
+                        <button type="submit" class="btn btn-secondary" style="flex: 1;">
+                            Submit Entry
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <p id="successText">✓ Your entry has been submitted successfully! Good luck! 🎭</p>
+                <div id="shareLinkContainer" style="display: none; margin-top: 16px; text-align: left;">
+                    <div style="word-break: break-word; color: #fff; margin-bottom: 12px;">
+                        Share this link so voters can find your entry:
+                        <div><a id="shareLink" href="#" target="_blank" style="color: #d4af37;"></a></div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="copyShareLinkBtn" style="width: 100%;">Copy share link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Competition categories
+        const categories = {
+            'STUDENT CATEGORIES': [
+                'Most Stylish Student of the Year',
+                'Most Influential Student of the Year',
+                'Most Ambitious Student of the Year',
+                'Best Dressed Male of the Year',
+                'Best Dressed Female of the Year',
+                'Most Creative Student of the Year',
+                'Most Social Student of the Year',
+                'Most Handsome Fresher of the Year',
+                'Most Beautiful Fresher of the Year',
+                'Comedian of the Year',
+                'Most Composed Student of the Year',
+                'Most Disciplined Student of the Year',
+                'Voice of the Voiceless Award',
+                'Social Impact Leader of the Year',
+                'Most Promising Student of the Year',
+            ],
+            'CONTENT & MEDIA': [
+                'Content Creator of the Year',
+                'Vlogger of the Year',
+                'Most Inspiring Online Personality',
+                'Photographer of the Year',
+                'Cinematographer of the Year',
+                'Graphic Designer of the Year',
+                'MC of the Year',
+                'Best Live Performer',
+                'DJ of the Year',
+                'Anchor of the Year',
+            ],
+            'BUSINESS & BRANDS': [
+                'Student Brand of the Year',
+                'Alumni Brand of the Year',
+                'Most Creative Business Concept',
+                'Entrepreneur of the Year',
+                'Fashion Brand of the Year',
+                'Food Brand of the Year',
+                'Best Nail Tech of the Year',
+                'Best Gadget Brand of the Year',
+                'Best Beauty Brand of the Year',
+                'Best Skincare Brand of the Year',
+                'Best Hair Brand of the Year',
+                'Best Photography Brand of the Year',
+                'Best Media Brand of the Year',
+                'Best Logistics Brand of the Year',
+                'Best Media Branding',
+                'Most Promising Brand Ambassador',
+                'Sponsor of the Year',
+                'Business Inclined Student of the Year',
+                'Customer Service Excellence of the Year',
+                'Most promising startup',
+            ],
+            'TALENT & PERFORMANCE': [
+                'Artiste of the Year',
+                'Fastest Rising Artiste',
+                'Dance Performer of the Year',
+                'Musician of the Year',
+                'Best Live Performer',
+            ],
+            'LEADERSHIP & IMPACT': [
+                'Most Impactful DOS of the Year',
+                'Most Collaborative DOS of the Year',
+                'Most Prestigious NACOS President of the Year',
+                'Mentor of the Year',
+                'Patriot of the Year',
+                'Most Supportive Personality',
+                'Tech Enthusiast of the Year',
+                'Most Coordinated Student of the Year',
+            ],
+            'FUNNY CATEGORIES 😭': [
+                'Couple of the Year',
+                'Most Likely to Still Be in School in 10 Years',
+                'Most Dramatic Student of the Year',
+                'Professional Borrower of the Year',
+                'Most Likely to Sleep in Class and Still Pass',
+                'King/Queen of Packaging',
+                'Most Fashionable Broke Student',
+                'Best Gossip of the Year 😭',
+                'Most Likely to Date the Whole Department',
+                'Serial Toaster of the Year',
+            ],
+        };
+
+        let selectedCategory = null;
+
+        // Initialize categories grid
+        function initializeCategories() {
+            const grid = document.getElementById('categoriesGrid');
+            grid.innerHTML = '';
+
+            Object.entries(categories).forEach(([section, items]) => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'category-section';
+                
+                const title = document.createElement('div');
+                title.className = 'category-section-title';
+                title.textContent = section;
+                sectionDiv.appendChild(title);
+
+                items.forEach(category => {
+                    const option = document.createElement('div');
+                    option.className = 'category-option';
+                    option.textContent = category;
+                    option.onclick = () => selectCategory(category, option);
+                    sectionDiv.appendChild(option);
+                });
+
+                grid.appendChild(sectionDiv);
+            });
+        }
+
+        function selectCategory(category, element) {
+            // Remove previous selection
+            document.querySelectorAll('.category-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedCategory = category;
+            
+            // Enable next button
+            document.getElementById('nextStageBtn').disabled = false;
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            if (modalId === 'competitionModal') resetCompetitionForm();
+        }
+
+        // Ticket modal
+        document.getElementById('buyTicketBtn').addEventListener('click', () => {
+            openModal('ticketModal');
+        });
+
+        // Competition modal
+        document.getElementById('enterCompetitionBtn').addEventListener('click', () => {
+            resetCompetitionForm();
+            initializeCategories();
+            openModal('competitionModal');
+        });
+        // Redirect to competitions page
+            document.getElementById('checkCompetitionsBtn').addEventListener('click', () => {
+                window.location.href = 'competitions.html';
+            });
+        // Close modals on outside click
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                if (e.target.id === 'competitionModal') resetCompetitionForm();
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Competition form - Next button
+        document.getElementById('nextStageBtn').addEventListener('click', () => {
+            if (selectedCategory) {
+                document.getElementById('stage1').style.display = 'none';
+                document.getElementById('stage2').style.display = 'block';
+                document.getElementById('modalStageTitle').textContent = selectedCategory;
+            }
+        });
+
+        // Competition form - Back button
+        document.getElementById('backStageBtn').addEventListener('click', () => {
+            document.getElementById('stage2').style.display = 'none';
+            document.getElementById('stage1').style.display = 'block';
+            document.getElementById('modalStageTitle').textContent = 'Select Category';
+        });
+
+        // File input handling
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.getElementById('fileLabel');
+
+        fileLabel.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileLabel.textContent = '✓ ' + e.target.files[0].name;
+                fileLabel.classList.add('has-file');
+            }
+        });
+
+        // Drag and drop
+        fileLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = 'rgba(212, 175, 55, 0.2)';
+        });
+
+        fileLabel.addEventListener('dragleave', () => {
+            fileLabel.style.background = 'rgba(212, 175, 55, 0.05)';
+        });
+
+        fileLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileLabel.style.background = 'rgba(212, 175, 55, 0.05)';
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
+            }
+        });
+
+        const competitionForm = document.getElementById('competitionForm');
+        const submitCompetitionButton = competitionForm.querySelector('button[type="submit"]');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        const shareLinkContainer = document.getElementById('shareLinkContainer');
+        const shareLinkEl = document.getElementById('shareLink');
+        const copyShareLinkBtn = document.getElementById('copyShareLinkBtn');
+        let currentShareUrl = '';
+
+        function resetCompetitionForm() {
+            competitionForm.reset();
+            selectedCategory = null;
+            document.getElementById('nextStageBtn').disabled = true;
+            document.getElementById('stage2').style.display = 'none';
+            document.getElementById('stage1').style.display = 'block';
+            document.getElementById('modalStageTitle').textContent = 'Select Category';
+            fileLabel.textContent = 'Click to upload or drag and drop\n(PNG, JPG, GIF up to 5MB)';
+            fileLabel.classList.remove('has-file');
+            successMessage.classList.remove('show');
+            shareLinkContainer.style.display = 'none';
+            successText.textContent = '✓ Your entry has been submitted successfully! Good luck! 🎭';
+            submitCompetitionButton.disabled = false;
+            submitCompetitionButton.textContent = 'Submit Entry';
+        }
+
+        // Competition form submission — send to backend
+        competitionForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!selectedCategory) {
+                alert('Please select a category first.');
+                return;
+            }
+
+            const submissionData = new FormData();
+            submissionData.append('category', selectedCategory);
+            submissionData.append('name', document.getElementById('participantName').value);
+            submissionData.append('department', document.getElementById('participantDept').value);
+            submissionData.append('level', document.getElementById('participantLevel').value);
+            submissionData.append('reason', document.getElementById('participantReason').value);
+
+            if (fileInput.files[0]) {
+                submissionData.append('image', fileInput.files[0]);
+            }
+
+            submitCompetitionButton.disabled = true;
+            submitCompetitionButton.textContent = 'Submitting...';
+
+            try {
+                const res = await fetch('/api/submit', {
+                    method: 'POST',
+                    body: submissionData,
+                });
+
+                if (!res.ok) throw new Error('Server error');
+                const json = await res.json();
+
+                const entryId = json?.entry?.id;
+                currentShareUrl = `${window.location.origin}/competitions.html#participant-${entryId}`;
+                shareLinkEl.href = currentShareUrl;
+                shareLinkEl.textContent = currentShareUrl;
+                shareLinkContainer.style.display = 'block';
+                successText.textContent = '✓ Your entry has been submitted successfully! Copy the link below so voters can find you instantly.';
+                successMessage.classList.add('show');
+                document.getElementById('stage2').style.display = 'none';
+
+            } catch (err) {
+                console.error('Submission error', err);
+                alert('Failed to submit entry. Please try again later.');
+            } finally {
+                submitCompetitionButton.disabled = false;
+                submitCompetitionButton.textContent = 'Submit Entry';
+            }
+        });
+
+        copyShareLinkBtn.addEventListener('click', async () => {
+            if (!currentShareUrl) return;
+            try {
+                await navigator.clipboard.writeText(currentShareUrl);
+                copyShareLinkBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyShareLinkBtn.textContent = 'Copy share link';
+                }, 2000);
+            } catch (err) {
+                console.error('Copy failed', err);
+                alert('Could not copy link. Please copy it manually.');
+            }
+        });
+
+        // Ticket form submission
+        document.getElementById('ticketForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Ticket purchase would be processed here!');
+            closeModal('ticketModal');
+        });
+    </script>
+</body>
+</html>
