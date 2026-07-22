@@ -22,6 +22,7 @@ const {
   appendLocalTicket,
   updateLocalTicket,
   getLocalTicket,
+  uploadImageToBlob,
 } = require('./lib/storage');
 
 const app = express();
@@ -196,7 +197,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     name: payload.name,
     department: payload.department || null,
     level: payload.level || null,
-    imageName: 'pending-image.png',
+    imageUrl: null, // Will be set after upload
     reason: payload.reason || null,
     receivedAt: new Date().toISOString(),
     votes: 0,
@@ -224,28 +225,23 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     (async () => {
       try {
         if (file) {
-          const extension = path.extname(file.originalname).toLowerCase() || '.png';
-          const imageName = `${savedEntry.id}${extension}`;
-          const imagePath = path.join(UPLOAD_DIR, imageName);
+          // Upload to Vercel Blob
+          const blobUrl = await uploadImageToBlob(
+            file.buffer,
+            file.originalname,
+            'submissions'
+          );
 
+          // Update entry with blob URL
           if (source === 'supabase') {
-            console.log('⤴️ Uploading image to Supabase storage', { bucket: process.env.SUPABASE_STORAGE_BUCKET, imageName, size: file.size, contentType: file.mimetype });
-            try {
-              const uploadResp = await uploadSubmissionImage(imageName, file.buffer, file.mimetype || 'application/octet-stream');
-              console.log('✅ Supabase storage upload response:', uploadResp);
-              await updateSubmission(savedEntry.id, { imageName });
-            } catch (uploadError) {
-              console.error('❌ Supabase storage upload error:', uploadError.message, uploadError);
-              // Fallback: save locally so the frontend can still access it from /uploads
-              await fs.promises.writeFile(imagePath, file.buffer);
-              updateLocalSubmission(savedEntry.id, { imageName });
-              console.warn('⚠️ Saved image locally as fallback:', imagePath);
-            }
+            await updateSubmission(savedEntry.id, { imageUrl: blobUrl });
           } else {
-            await fs.promises.writeFile(imagePath, file.buffer);
-            updateLocalSubmission(savedEntry.id, { imageName });
+            updateLocalSubmission(savedEntry.id, { imageUrl: blobUrl });
           }
+
+          console.log('✅ Image uploaded to Vercel Blob:', blobUrl);
         }
+
         console.log('✅ Entry saved:', savedEntry.name, `(${source})`);
       } catch (bgErr) {
         console.error('❌ Background processing error:', bgErr.message);
