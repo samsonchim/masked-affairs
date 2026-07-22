@@ -171,6 +171,18 @@ app.get('/api/competitions', async (req, res) => {
   }
 });
 
+// Debug: list objects in Supabase storage bucket (requires SUPABASE configured)
+app.get('/api/storage/list', async (req, res) => {
+  const prefix = req.query.prefix || '';
+  try {
+    const list = await listStorageObjects(process.env.SUPABASE_STORAGE_BUCKET, prefix);
+    return res.json({ ok: true, items: list });
+  } catch (err) {
+    console.error('❌ Storage list error:', err);
+    return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.post('/api/submit', upload.single('image'), async (req, res) => {
   const payload = req.body || {};
   const file = req.file;
@@ -217,12 +229,16 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
           const imagePath = path.join(UPLOAD_DIR, imageName);
 
           if (source === 'supabase') {
+            console.log('⤴️ Uploading image to Supabase storage', { bucket: process.env.SUPABASE_STORAGE_BUCKET, imageName, size: file.size, contentType: file.mimetype });
             try {
-              await uploadSubmissionImage(imageName, file.buffer, file.mimetype || 'application/octet-stream');
+              const uploadResp = await uploadSubmissionImage(imageName, file.buffer, file.mimetype || 'application/octet-stream');
+              console.log('✅ Supabase storage upload response:', uploadResp);
               await updateSubmission(savedEntry.id, { imageName });
             } catch (uploadError) {
-              console.error('❌ Supabase storage upload error:', uploadError.message);
+              console.error('❌ Supabase storage upload error:', uploadError.message, uploadError);
+              // Fallback: save locally so the frontend can still access it from /uploads
               await fs.promises.writeFile(imagePath, file.buffer);
+              updateLocalSubmission(savedEntry.id, { imageName });
               console.warn('⚠️ Saved image locally as fallback:', imagePath);
             }
           } else {
