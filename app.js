@@ -219,41 +219,30 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       });
     }
 
-    // Always save the submission first, then handle image upload asynchronously.
+    if (file) {
+      console.log('📦 Uploading submission image to Vercel Blob', {
+        originalName: file.originalname,
+        size: file.size,
+        source,
+      });
+
+      try {
+        const blobUrl = await uploadImageToBlob(file.buffer, file.originalname, 'submissions');
+
+        if (source === 'supabase') {
+          savedEntry = await updateSubmission(savedEntry.id, { imageName: blobUrl });
+        } else {
+          savedEntry = updateLocalSubmission(savedEntry.id, { imageName: blobUrl }) || savedEntry;
+        }
+
+        console.log('✅ Image uploaded to Vercel Blob:', blobUrl);
+      } catch (uploadErr) {
+        console.error('❌ Image upload or update failed:', uploadErr.message);
+      }
+    }
+
     res.json({ ok: true, entry: savedEntry, source });
 
-    (async () => {
-      try {
-        if (file) {
-          console.log('📦 Uploading submission image to Vercel Blob', {
-            originalName: file.originalname,
-            size: file.size,
-            source,
-          });
-
-          const blobUrl = await uploadImageToBlob(file.buffer, file.originalname, 'submissions');
-
-          if (source === 'supabase') {
-            await updateSubmission(savedEntry.id, { imageName: blobUrl });
-          } else {
-            updateLocalSubmission(savedEntry.id, { imageName: blobUrl });
-          }
-
-          console.log('✅ Image uploaded to Vercel Blob:', blobUrl);
-        }
-
-        console.log('✅ Entry saved:', savedEntry.name, `(${source})`);
-      } catch (bgErr) {
-        console.error('❌ Background processing error:', bgErr.message);
-        if (file && source === 'supabase') {
-          try {
-            await updateSubmission(savedEntry.id, { imageUrl: null, imageName: file.originalname });
-          } catch (updateErr) {
-            console.error('⚠️ Failed to record upload error on submission:', updateErr.message);
-          }
-        }
-      }
-    })();
   } catch (err) {
     console.error('❌ Error saving submission:', err);
     return res.status(500).json({ error: 'Failed to save submission' });
@@ -282,7 +271,7 @@ app.post('/api/tickets/initiate', async (req, res) => {
     amount: amountNaira,
     status: 'pending',
     reference,
-    requestedAt: new Date().toISOString(),
+    requested_at: new Date().toISOString(),
   };
 
   try {
@@ -392,14 +381,14 @@ app.get('/api/tickets/callback', async (req, res) => {
     try {
       await updateTicket(ticketId, {
         status: 'paid',
-        confirmedAt: new Date().toISOString(),
+        confirmed_at: new Date().toISOString(),
         paystack_response: verifyData.data,
       });
     } catch (supabaseError) {
       console.error('⚠️ Supabase ticket update failed:', supabaseError.message);
       updateLocalTicket(ticketId, {
         status: 'paid',
-        confirmedAt: new Date().toISOString(),
+        confirmed_at: new Date().toISOString(),
         paystack_response: verifyData.data,
       });
     }
