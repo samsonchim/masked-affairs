@@ -102,10 +102,15 @@ app.get('/api/health', (req, res) => {
 
 app.get('/api/health/db', async (req, res) => {
   try {
-    await pingSupabase();
+    await Promise.race([
+      pingSupabase(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout')), 3000)
+      ),
+    ]);
     return res.json({ ok: true, db: 'connected' });
   } catch (err) {
-    return res.status(503).json({ ok: false, error: err.message });
+    return res.status(503).json({ ok: false, db: 'disconnected', error: err.message });
   }
 });
 
@@ -113,13 +118,24 @@ app.get('/api/competitions', async (req, res) => {
   const categoryFilter = req.query.category;
 
   try {
-    const { rows, source, error } = await loadSubmissionRows();
-    const categories = buildCategories(rows, categoryFilter);
+    // Use a timeout race: if Supabase takes >5 seconds, return local data instead
+    const result = await Promise.race([
+      loadSubmissionRows(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Supabase took too long')), 5000)
+      ),
+    ]).catch(() => ({
+      rows: readLocalSubmissions(),
+      source: 'local',
+      error: 'Supabase timeout - using cached data',
+    }));
+
+    const categories = buildCategories(result.rows, categoryFilter);
 
     return res.json({
       categories,
-      source,
-      warning: source === 'local' ? error || 'Using local fallback data.' : undefined,
+      source: result.source,
+      warning: result.source === 'local' ? result.error : undefined,
     });
   } catch (err) {
     console.error('❌ Error fetching competitions:', err);

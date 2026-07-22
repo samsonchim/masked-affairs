@@ -1,6 +1,6 @@
-const serverless = require('serverless-http');
 const app = require('../app');
 
-module.exports = serverless(app, {
-  binary: ['image/*', 'multipart/form-data'],
-});
+module.exports = (req, res) => {
+  // Let Express handle the request/response directly
+  app(req, res);
+};
