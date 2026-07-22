@@ -19,7 +19,7 @@
     body {
       font-family: 'Space Grotesk', sans-serif;
       background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%),
-        url('masked-affairs-bg.png') center/cover fixed no-repeat;
+        url('/masked-affairs-bg.png') center/cover fixed no-repeat;
       color: #e8e8e8;
       min-height: 100vh;
       overflow-x: hidden;
@@ -632,15 +632,10 @@
       card.className = 'participant-card';
       card.id = `participant-${participant.id}`;
 
-      const imageSrc = participant.imageUrl || (participant.imageName ? `/uploads/${participant.imageName}` : '');
-      const imageHtml = imageSrc
-        ? `<div class="participant-media">
-            <img class="participant-image" src="${imageSrc}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-            <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
-          </div>`
-        : `<div class="participant-media">
-            <div class="image-fallback" style="display:grid;">${buildInitials(participant.name)}</div>
-          </div>`;
+      const imageHtml = `<div class="participant-media">
+          <img class="participant-image" src="/uploads/${participant.imageName}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+          <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
+        </div>`;
 
       card.innerHTML = `
         <div class="participant-details">
