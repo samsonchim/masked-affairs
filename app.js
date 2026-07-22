@@ -234,9 +234,9 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
           const blobUrl = await uploadImageToBlob(file.buffer, file.originalname, 'submissions');
 
           if (source === 'supabase') {
-            await updateSubmission(savedEntry.id, { imageUrl: blobUrl });
+            await updateSubmission(savedEntry.id, { imageName: blobUrl });
           } else {
-            updateLocalSubmission(savedEntry.id, { imageUrl: blobUrl });
+            updateLocalSubmission(savedEntry.id, { imageName: blobUrl });
           }
 
           console.log('✅ Image uploaded to Vercel Blob:', blobUrl);
