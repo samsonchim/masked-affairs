@@ -741,7 +741,6 @@ app.get('/api/vote/callback', async (req, res) => {
     }));
   }
 });
-
 app.use('/uploads', express.static(UPLOAD_DIR));
 
 app.get('/', (req, res) => {
@@ -766,6 +765,23 @@ app.get('/tickets.html', (req, res) => {
 
 app.get('/masked-affairs-bg.png', (req, res) => {
   res.sendFile(path.join(__dirname, 'masked-affairs-bg.png'));
+});
+
+// Explicit logo routes for Vercel
+app.get('/logos/csc.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'logos', 'csc.png'));
+});
+
+app.get('/logos/bch.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'logos', 'bch.png'));
+});
+
+app.get('/logos/mme.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'logos', 'mme.png'));
+});
+
+app.get('/logos/urp.png', (req, res) => {
+  res.sendFile(path.join(__dirname, 'logos', 'urp.png'));
 });
 
 app.use(express.static(path.join(__dirname), {
