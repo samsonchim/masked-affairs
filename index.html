@@ -720,6 +720,105 @@
             font-family: 'Righteous', sans-serif;
             font-weight: 700;
         }
+
+
+        /* ============ FOOTER STYLES ============ */
+.footer {
+    padding: 30px 20px 20px;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+    text-align: center;
+    font-size: 11px;
+    color: #999999;
+    line-height: 1.6;
+    margin-top: auto;
+}
+
+.footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+}
+
+.footer-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-label {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #d4af37;
+    font-weight: 600;
+    font-size: 11px;
+}
+
+.contacts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.contacts-grid span {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.footer a {
+    color: #d4af37;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.footer a:hover {
+    color: #f0e68c;
+    text-decoration: underline;
+}
+
+.footer-dev {
+    font-size: 11px;
+    color: #aaaaaa;
+}
+
+.footer-dev strong {
+    color: #e8e8e8;
+    letter-spacing: 0.5px;
+}
+
+.footer-copyright {
+    font-size: 10px;
+    color: #666666;
+    max-width: 600px;
+    letter-spacing: 0.3px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 480px) {
+    .footer {
+        padding: 24px 15px 15px;
+        font-size: 10px;
+    }
+    
+    .footer-label {
+        font-size: 10px;
+    }
+
+    .contacts-grid {
+        gap: 8px;
+    }
+
+    .footer-copyright {
+        font-size: 9px;
+    }
+}
     </style>
 </head>
 <body>
@@ -926,7 +1025,32 @@
             </div>
         </div>
     </div>
+    <!-- ============ FOOTER ============ -->
+<footer class="footer">
+    <div class="footer-container">
+        <!-- Contact Lines -->
+        <div class="footer-section">
+            <span class="footer-label">Contact:</span>
+            <div class="contacts-grid">
+                <span>CSC: <a href="tel:09078009786">09078009786</a></span>
+                <span>BCH: <a href="tel:08061453269">08061453269</a></span>
+                <span>MME: <a href="tel:0907995327">0907995327</a></span>
+                <span>URP: <a href="tel:09062103442">09062103442</a></span>
+            </div>
+        </div>
 
+        <!-- Tech / Payment Support -->
+        <p class="footer-dev">
+            For technical complaints or payment issues, contact the developer 
+            <strong>ARUSI</strong> (<a href="https://wa.me/2349114172014" target="_blank" rel="noopener noreferrer">wa.me/+2349114172014</a>)
+        </p>
+
+        <!-- Copyright -->
+        <p class="footer-copyright">
+            &copy; 2026 Masked Affairs. All rights reserved. No part of this publication shall be reproduced without the consent of the developer.
+        </p>
+    </div>
+</footer>
     <script>
         // Competition categories
         const categories = {

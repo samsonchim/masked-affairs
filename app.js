@@ -113,8 +113,8 @@ function buildCategories(rows, categoryFilter) {
 }
 
 function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, theme = 'success' }) {
-  const bg = theme === 'success' ? '#ecfdf5' : '#fef2f2';
-  const text = theme === 'success' ? '#065f46' : '#991b1b';
+  const bg = theme === 'success' ? 'rgba(20, 184, 166, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+  const text = theme === 'success' ? '#2dd4bf' : '#f87171';
   const buttonBg = theme === 'success' ? '#14b8a6' : '#ef4444';
   const buttonHover = theme === 'success' ? '#0f766e' : '#dc2626';
 
@@ -128,22 +128,102 @@ function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, t
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body { margin: 0; min-height: 100vh; font-family: Inter, system-ui, sans-serif;    font-family: 'Space Grotesk', sans-serif;
-            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%), 
-                        url('/masked-affairs-bg.png') center/cover fixed no-repeat;
-            color: #e8e8e8;
-            overflow-x: hidden;
-            min-height: 100vh;}
-    .page { width: min(760px, 100%); background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 28px; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35); padding: 36px; }
-    .badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; padding: 10px 16px; border-radius: 999px; background: ${bg}; color: ${text}; font-weight: 700; letter-spacing: 0.02em; }
-    .title { font-size: clamp(2rem, 4vw, 2.75rem); margin: 0 0 16px; color: #fff; }
-    .subtitle { margin: 0 0 26px; color: #cbd5e1; line-height: 1.6; }
-    .message { margin: 0 0 28px; color: #e2e8f0; line-height: 1.75; background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 18px; padding: 18px; }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
-    .btn { display: inline-flex; align-items: center; justify-content: center; min-width: 160px; padding: 14px 20px; border-radius: 14px; border: none; color: #fff; text-decoration: none; background: ${buttonBg}; transition: transform 0.2s ease, background 0.2s ease; }
-    .btn:hover { transform: translateY(-1px); background: ${buttonHover}; }
-    .secondary { background: rgba(228, 231, 239, 0.12); color: #e2e8f0; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: 'Space Grotesk', sans-serif;
+      background: linear-gradient(135deg, rgba(10, 10, 10, 0.85) 0%, rgba(26, 20, 20, 0.85) 50%, rgba(15, 15, 15, 0.85) 100%), 
+                  url('/masked-affairs-bg.png') center/cover fixed no-repeat;
+      color: #e8e8e8;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    .page {
+      width: min(760px, 100%);
+      background: rgba(18, 18, 20, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      padding: 36px;
+      box-sizing: border-box;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: ${bg};
+      color: ${text};
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border: 1px solid ${theme === 'success' ? 'rgba(45, 212, 191, 0.3)' : 'rgba(248, 113, 113, 0.3)'};
+    }
+    .title {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      margin: 0 0 16px;
+      color: #ffffff;
+      font-weight: 700;
+    }
+    .subtitle {
+      margin: 0 0 26px;
+      color: #a3a3a3;
+      line-height: 1.6;
+    }
+    .message {
+      margin: 0 0 28px;
+      color: #e8e8e8;
+      line-height: 1.75;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      font-family: inherit;
+      text-decoration: none;
+      background: ${buttonBg};
+      transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px ${theme === 'success' ? 'rgba(20, 184, 166, 0.25)' : 'rgba(239, 68, 68, 0.25)'};
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      background: ${buttonHover};
+    }
+    .secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e8e8e8;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: none;
+    }
+    .secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
   </style>
 </head>
 <body>
