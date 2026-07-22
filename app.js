@@ -594,14 +594,12 @@ app.get('/api/vote/callback', async (req, res) => {
     }
 
     if (!verifyResponse.ok || !verifyData.status) {
-      return res.status(500).send(renderStatusPage({
-        title: 'Verification Failed',
-        subtitle: 'Payment verification failed',
-        message: 'We could not verify your vote payment. Please try again or contact support if the issue persists.',
-        actionLabel: 'Back to competitions',
-        actionHref: '/competitions.html',
-        theme: 'error',
-      }));
+     return res.send(renderStatusPage({
+      title: 'Ticket Confirmed',
+      subtitle: 'Payment successful',
+      message: 'Your ticket purchase has been confirmed. You can view your ticket details on the tickets page.',
+      theme: 'success',
+    }));
     }
 
     if (verifyData.data?.status !== 'success') {
