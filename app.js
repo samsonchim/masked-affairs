@@ -286,8 +286,7 @@ app.get('/api/competitions', async (req, res) => {
     const result = await withTimeout(
       supabase
         .from('submissions')
-        .select('*')
-        .order('receivedAt', { ascending: false }),
+        .select('id, category, name, department, level, imageName, reason, votes, receivedAt'),
       12000,
       'Supabase fetch timed out'
     );
@@ -303,9 +302,17 @@ app.get('/api/competitions', async (req, res) => {
       return res.status(500).json({ error: 'Failed to load competition entries' });
     }
 
+    const rows = Array.isArray(data)
+      ? [...data].sort((a, b) => {
+          const aTime = new Date(a.receivedAt || 0).getTime();
+          const bTime = new Date(b.receivedAt || 0).getTime();
+          return bTime - aTime;
+        })
+      : [];
+
     const categoriesMap = new Map();
 
-    data.forEach((row) => {
+    rows.forEach((row) => {
       const category = row.category || 'Uncategorized';
       const votes = Number(row.votes) || 0;
 
