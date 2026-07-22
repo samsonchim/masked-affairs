@@ -129,7 +129,12 @@ function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, t
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}</title>
   <style>
-    body { margin: 0; min-height: 100vh; font-family: Inter, system-ui, sans-serif; background: linear-gradient(180deg, #030712 0%, #0f172a 100%); color: #e2e8f0; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    body { margin: 0; min-height: 100vh; font-family: Inter, system-ui, sans-serif;    font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%), 
+                        url('/masked-affairs-bg.png') center/cover fixed no-repeat;
+            color: #e8e8e8;
+            overflow-x: hidden;
+            min-height: 100vh;}
     .page { width: min(760px, 100%); background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 28px; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35); padding: 36px; }
     .badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; padding: 10px 16px; border-radius: 999px; background: ${bg}; color: ${text}; font-weight: 700; letter-spacing: 0.02em; }
     .title { font-size: clamp(2rem, 4vw, 2.75rem); margin: 0 0 16px; color: #fff; }
@@ -487,7 +492,7 @@ app.get('/api/tickets/callback', async (req, res) => {
     return res.send(renderStatusPage({
       title: 'Ticket Confirmed',
       subtitle: 'Payment successful',
-      message: 'Your ticket purchase has been confirmed successfully.',
+      message: 'Your ticket purchase has been confirmed successfully. We will send a follow up email with your ticket details. Get ready to CUM & MINGLE!',
       theme: 'success',
     }));
   } catch (err) {
