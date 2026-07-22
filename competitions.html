@@ -631,9 +631,10 @@
       const card = document.createElement('article');
       card.className = 'participant-card';
       card.id = `participant-${participant.id}`;
+      const imageSrc = participant.imageUrl || `/uploads/${participant.imageName}`;
 
       const imageHtml = `<div class="participant-media">
-          <img class="participant-image" src="/uploads/${participant.imageName}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+          <img class="participant-image" src="${imageSrc}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
           <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
         </div>`;
 

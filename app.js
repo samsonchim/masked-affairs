@@ -10,12 +10,18 @@ const {
   updateSubmission,
   fetchSubmissionVotes,
   pingSupabase,
+  uploadSubmissionImage,
+  insertTicket,
+  updateTicket,
 } = require('./lib/supabase-rest');
 const {
   readLocalSubmissions,
   appendLocalSubmission,
   updateLocalSubmission,
   getLocalSubmission,
+  appendLocalTicket,
+  updateLocalTicket,
+  getLocalTicket,
 } = require('./lib/storage');
 
 const app = express();
@@ -35,6 +41,15 @@ const upload = multer({
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || 'sk_test_6d1f717865fb753a93eee779f8e183b2d97ea923';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+const SUPABASE_STORAGE_PUBLIC_URL = process.env.SUPABASE_URL
+  ? `${process.env.SUPABASE_URL.replace(/\/$/, '')}/storage/v1/object/public/${process.env.SUPABASE_STORAGE_BUCKET}`
+  : null;
+const TICKET_PRICES = {
+  regular: 3000,
+  vip: 7000,
+  table4: 50000,
+  table6: 70000,
+};
 
 app.use(express.json({ limit: '10mb' }));
 
@@ -44,6 +59,18 @@ function buildCategories(rows, categoryFilter) {
   rows.forEach((row) => {
     const category = row.category || 'Uncategorized';
     const votes = Number(row.votes) || 0;
+    const imageName = row.imageName || 'pending-image.png';
+    let imageUrl = row.imageUrl || '';
+
+    if (!imageUrl) {
+      if (String(imageName).startsWith('http://') || String(imageName).startsWith('https://')) {
+        imageUrl = imageName;
+      } else if (SUPABASE_STORAGE_PUBLIC_URL && imageName !== 'pending-image.png') {
+        imageUrl = `${SUPABASE_STORAGE_PUBLIC_URL}/${encodeURIComponent(imageName)}`;
+      } else {
+        imageUrl = `/uploads/${imageName}`;
+      }
+    }
 
     if (!categoriesMap.has(category)) {
       categoriesMap.set(category, {
@@ -59,7 +86,8 @@ function buildCategories(rows, categoryFilter) {
       name: row.name,
       department: row.department,
       level: row.level,
-      imageName: row.imageName,
+      imageName,
+      imageUrl,
       reason: row.reason,
       votes,
       receivedAt: row.receivedAt,
@@ -188,15 +216,17 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
           const imageName = `${savedEntry.id}${extension}`;
           const imagePath = path.join(UPLOAD_DIR, imageName);
 
-          await fs.promises.writeFile(imagePath, file.buffer);
-
           if (source === 'supabase') {
             try {
+              await uploadSubmissionImage(imageName, file.buffer, file.mimetype || 'application/octet-stream');
               await updateSubmission(savedEntry.id, { imageName });
-            } catch (updateError) {
-              console.error('❌ Supabase imageName update error:', updateError.message);
+            } catch (uploadError) {
+              console.error('❌ Supabase storage upload error:', uploadError.message);
+              await fs.promises.writeFile(imagePath, file.buffer);
+              console.warn('⚠️ Saved image locally as fallback:', imagePath);
             }
           } else {
+            await fs.promises.writeFile(imagePath, file.buffer);
             updateLocalSubmission(savedEntry.id, { imageName });
           }
         }
@@ -208,6 +238,157 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
   } catch (err) {
     console.error('❌ Error saving submission:', err);
     return res.status(500).json({ error: 'Failed to save submission' });
+  }
+});
+
+app.post('/api/tickets/initiate', async (req, res) => {
+  const { name, email, phone, ticketType, quantity } = req.body || {};
+  const normalizedQuantity = Math.max(1, Number(quantity) || 1);
+  const ticketPrice = TICKET_PRICES[ticketType];
+
+  if (!name || !email || !phone || !ticketType || !ticketPrice) {
+    return res.status(400).json({ error: 'Please complete all ticket fields.' });
+  }
+
+  const amountNaira = ticketPrice * normalizedQuantity;
+  const reference = `ticket-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const callbackUrl = `${APP_URL}/api/tickets/callback`;
+
+  const ticketEntry = {
+    name,
+    email,
+    phone,
+    ticket_type: ticketType,
+    quantity: normalizedQuantity,
+    amount: amountNaira,
+    status: 'pending',
+    reference,
+    requestedAt: new Date().toISOString(),
+  };
+
+  try {
+    let savedTicket;
+    let source = 'supabase';
+
+    try {
+      savedTicket = await insertTicket(ticketEntry);
+    } catch (supabaseError) {
+      console.error('⚠️ Supabase ticket insert failed, saving locally:', supabaseError.message);
+      source = 'local';
+      savedTicket = appendLocalTicket({
+        ...ticketEntry,
+        id: Date.now(),
+      });
+    }
+
+    const response = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        amount: amountNaira * 100,
+        currency: 'NGN',
+        reference,
+        callback_url: callbackUrl,
+        metadata: {
+          ticketId: savedTicket.id,
+          source,
+        },
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.status) {
+      console.error('❌ Paystack ticket init error:', data);
+      return res.status(500).json({ error: 'Unable to start ticket payment.' });
+    }
+
+    const paystackReference = data.data?.reference || reference;
+    return res.json({
+      ok: true,
+      authorization_url: data.data.authorization_url,
+      reference: paystackReference,
+      amountNaira,
+      quantity: normalizedQuantity,
+      ticketId: savedTicket.id,
+      source,
+    });
+  } catch (err) {
+    console.error('❌ Ticket initiation error:', err);
+    return res.status(500).json({ error: 'Unable to start ticket payment.' });
+  }
+});
+
+app.get('/api/tickets/callback', async (req, res) => {
+  const rawReference = Array.isArray(req.query.reference)
+    ? req.query.reference[0]
+    : req.query.reference;
+  const rawTrxref = Array.isArray(req.query.trxref) ? req.query.trxref[0] : req.query.trxref;
+  const reference = rawReference || rawTrxref;
+
+  if (!reference) {
+    return res.status(400).send('Missing payment reference.');
+  }
+
+  const verifyReference = async (ref) => {
+    const verifyResponse = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(ref)}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const verifyData = await verifyResponse.json();
+    return { verifyResponse, verifyData };
+  };
+
+  try {
+    let { verifyResponse, verifyData } = await verifyReference(reference);
+
+    if ((!verifyResponse.ok || !verifyData.status) && rawTrxref && rawTrxref !== reference) {
+      ({ verifyResponse, verifyData } = await verifyReference(rawTrxref));
+    }
+
+    if (!verifyResponse.ok || !verifyData.status) {
+      return res.status(500).send('Payment verification failed.');
+    }
+
+    if (verifyData.data?.status !== 'success') {
+      return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>Payment not completed</h2><p>Your payment could not be verified yet.</p><a href="/" style="color:#d4af37;">Return home</a></body></html>');
+    }
+
+    const metadata = typeof verifyData.data.metadata === 'string'
+      ? JSON.parse(verifyData.data.metadata || '{}')
+      : verifyData.data.metadata || {};
+    const ticketId = Number(metadata.ticketId);
+
+    if (!ticketId) {
+      return res.status(500).send('Payment succeeded but ticket details are unavailable.');
+    }
+
+    try {
+      await updateTicket(ticketId, {
+        status: 'paid',
+        confirmedAt: new Date().toISOString(),
+        paystack_response: verifyData.data,
+      });
+    } catch (supabaseError) {
+      console.error('⚠️ Supabase ticket update failed:', supabaseError.message);
+      updateLocalTicket(ticketId, {
+        status: 'paid',
+        confirmedAt: new Date().toISOString(),
+        paystack_response: verifyData.data,
+      });
+    }
+
+    return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>✅ Ticket payment successful</h2><p>Your ticket purchase has been confirmed.</p><a href="/" style="color:#d4af37;">Return home</a></body></html>');
+  } catch (err) {
+    console.error('❌ Ticket callback error:', err);
+    return res.status(500).send('Payment verification failed.');
   }
 });
 

@@ -1225,10 +1225,48 @@
         });
 
         // Ticket form submission
-        document.getElementById('ticketForm').addEventListener('submit', (e) => {
+        document.getElementById('ticketForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert('Ticket purchase would be processed here!');
-            closeModal('ticketModal');
+            const form = e.target;
+            const name = form.querySelector('input[type="text"]').value.trim();
+            const email = form.querySelector('input[type="email"]').value.trim();
+            const phone = form.querySelector('input[type="tel"]').value.trim();
+            const ticketType = form.querySelector('select').value;
+            const quantity = Number(form.querySelector('input[type="number"]').value) || 1;
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            if (!name || !email || !phone || !ticketType) {
+                alert('Please complete all ticket fields.');
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+
+            try {
+                const response = await fetch('/api/tickets/initiate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, phone, ticketType, quantity }),
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to start ticket payment.');
+                }
+
+                if (!data.authorization_url) {
+                    throw new Error('No payment URL returned.');
+                }
+
+                window.location.href = data.authorization_url;
+            } catch (err) {
+                console.error('Ticket purchase error:', err);
+                alert(err.message || 'Unable to start ticket purchase. Please try again later.');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Proceed to Payment';
+            }
         });
     </script>
 </body>
