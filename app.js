@@ -112,6 +112,46 @@ function buildCategories(rows, categoryFilter) {
   return categories;
 }
 
+function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, theme = 'success' }) {
+  const accent = theme === 'success' ? '#0f766e' : '#b91c1c';
+  const bg = theme === 'success' ? '#ecfdf5' : '#fef2f2';
+  const text = theme === 'success' ? '#065f46' : '#991b1b';
+  const buttonBg = theme === 'success' ? '#14b8a6' : '#ef4444';
+  const buttonHover = theme === 'success' ? '#0f766e' : '#dc2626';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <style>
+    body { margin: 0; min-height: 100vh; font-family: Inter, system-ui, sans-serif; background: linear-gradient(180deg, #030712 0%, #0f172a 100%); color: #e2e8f0; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .page { width: min(760px, 100%); background: rgba(15, 23, 42, 0.96); border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 28px; box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35); padding: 36px; }
+    .badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; padding: 10px 16px; border-radius: 999px; background: ${bg}; color: ${text}; font-weight: 700; letter-spacing: 0.02em; }
+    .title { font-size: clamp(2rem, 4vw, 2.75rem); margin: 0 0 16px; color: #fff; }
+    .subtitle { margin: 0 0 26px; color: #cbd5e1; line-height: 1.6; }
+    .message { margin: 0 0 28px; color: #e2e8f0; line-height: 1.75; background: rgba(148, 163, 184, 0.08); border: 1px solid rgba(148, 163, 184, 0.12); border-radius: 18px; padding: 18px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; min-width: 160px; padding: 14px 20px; border-radius: 14px; border: none; color: #fff; text-decoration: none; background: ${buttonBg}; transition: transform 0.2s ease, background 0.2s ease; }
+    .btn:hover { transform: translateY(-1px); background: ${buttonHover}; }
+    .secondary { background: rgba(228, 231, 239, 0.12); color: #e2e8f0; }
+  </style>
+</head>
+<body>
+  <section class="page">
+    <span class="badge">${title}</span>
+    <h1 class="title">${subtitle}</h1>
+    <p class="message">${message}</p>
+    <div class="actions">
+      <a class="btn" href="${actionHref}">${actionLabel}</a>
+      <a class="btn secondary" href="/">Return home</a>
+    </div>
+  </section>
+</body>
+</html>`;
+}
+
 async function loadSubmissionRows() {
   try {
     const rows = await fetchSubmissions();
@@ -397,11 +437,25 @@ app.get('/api/tickets/callback', async (req, res) => {
     }
 
     if (!verifyResponse.ok || !verifyData.status) {
-      return res.status(500).send('Payment verification failed.');
+      return res.status(500).send(renderStatusPage({
+        title: 'Verification Failed',
+        subtitle: 'Payment verification failed',
+        message: 'We could not verify the ticket payment with Paystack. Please try again or contact support.',
+        actionLabel: 'Back to tickets',
+        actionHref: '/tickets.html',
+        theme: 'error',
+      }));
     }
 
     if (verifyData.data?.status !== 'success') {
-      return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>Payment not completed</h2><p>Your payment could not be verified yet.</p><a href="/" style="color:#d4af37;">Return home</a></body></html>');
+      return res.send(renderStatusPage({
+        title: 'Payment Pending',
+        subtitle: 'Payment not completed',
+        message: 'Your ticket payment did not complete successfully. Please check your Paystack payment page or try again.',
+        actionLabel: 'Go back to tickets',
+        actionHref: '/tickets.html',
+        theme: 'error',
+      }));
     }
 
     const metadata = typeof verifyData.data.metadata === 'string'
@@ -410,7 +464,14 @@ app.get('/api/tickets/callback', async (req, res) => {
     const ticketId = Number(metadata.ticketId);
 
     if (!ticketId) {
-      return res.status(500).send('Payment succeeded but ticket details are unavailable.');
+      return res.status(500).send(renderStatusPage({
+        title: 'Ticket Error',
+        subtitle: 'Ticket details missing',
+        message: 'Your payment appears to have succeeded, but we could not find the ticket record. Please contact support with your reference.',
+        actionLabel: 'Back to tickets',
+        actionHref: '/tickets.html',
+        theme: 'error',
+      }));
     }
 
     try {
@@ -428,10 +489,24 @@ app.get('/api/tickets/callback', async (req, res) => {
       });
     }
 
-    return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>✅ Ticket payment successful</h2><p>Your ticket purchase has been confirmed.</p><a href="/" style="color:#d4af37;">Return home</a></body></html>');
+    return res.send(renderStatusPage({
+      title: 'Ticket Confirmed',
+      subtitle: 'Payment successful',
+      message: 'Your ticket purchase has been confirmed. You can view your ticket details on the tickets page.',
+      actionLabel: 'View my tickets',
+      actionHref: '/tickets.html',
+      theme: 'success',
+    }));
   } catch (err) {
     console.error('❌ Ticket callback error:', err);
-    return res.status(500).send('Payment verification failed.');
+    return res.status(500).send(renderStatusPage({
+      title: 'Verification Failed',
+      subtitle: 'Ticket verification failed',
+      message: 'There was an error verifying your ticket payment. Please try again or contact support.',
+      actionLabel: 'Back to tickets',
+      actionHref: '/tickets.html',
+      theme: 'error',
+    }));
   }
 });
 
@@ -519,11 +594,25 @@ app.get('/api/vote/callback', async (req, res) => {
     }
 
     if (!verifyResponse.ok || !verifyData.status) {
-      return res.status(500).send('Payment verification failed.');
+      return res.status(500).send(renderStatusPage({
+        title: 'Verification Failed',
+        subtitle: 'Payment verification failed',
+        message: 'We could not verify your vote payment. Please try again or contact support if the issue persists.',
+        actionLabel: 'Back to competitions',
+        actionHref: '/competitions.html',
+        theme: 'error',
+      }));
     }
 
     if (verifyData.data?.status !== 'success') {
-      return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>Payment not completed</h2><p>Your payment could not be verified yet.</p><a href="/competitions.html" style="color:#d4af37;">Try again</a></body></html>');
+      return res.send(renderStatusPage({
+        title: 'Payment Pending',
+        subtitle: 'Payment not completed',
+        message: 'Your vote payment did not complete successfully. Please try again or verify your transaction in Paystack.',
+        actionLabel: 'Back to competitions',
+        actionHref: '/competitions.html',
+        theme: 'error',
+      }));
     }
 
     const metadata = typeof verifyData.data.metadata === 'string'
@@ -533,7 +622,14 @@ app.get('/api/vote/callback', async (req, res) => {
     const quantity = Number(metadata.quantity) || 0;
 
     if (!participantId || quantity <= 0) {
-      return res.status(500).send('Payment succeeded but vote details are unavailable.');
+      return res.status(500).send(renderStatusPage({
+        title: 'Vote Error',
+        subtitle: 'Vote details missing',
+        message: 'Your payment succeeded, but we could not resolve the vote information. Please contact support with your payment reference.',
+        actionLabel: 'Back to competitions',
+        actionHref: '/competitions.html',
+        theme: 'error',
+      }));
     }
 
     let currentVotes = 0;
@@ -548,16 +644,37 @@ app.get('/api/vote/callback', async (req, res) => {
     } catch (supabaseError) {
       const localParticipant = getLocalSubmission(participantId);
       if (!localParticipant) {
-        return res.status(500).send('Payment succeeded but your vote could not be recorded.');
+        return res.status(500).send(renderStatusPage({
+          title: 'Vote Error',
+          subtitle: 'Vote could not be recorded',
+          message: 'Your payment succeeded, but we could not record the vote. Please contact support or try again.',
+          actionLabel: 'Back to competitions',
+          actionHref: '/competitions.html',
+          theme: 'error',
+        }));
       }
       currentVotes = Number(localParticipant.votes) || 0;
       updateLocalSubmission(participantId, { votes: currentVotes + quantity });
     }
 
-    return res.send('<html><body style="font-family:Arial,sans-serif;padding:40px;background:#111;color:#fff;"><h2>✅ Vote payment successful</h2><p>Your vote has been recorded.</p><a href="/competitions.html" style="color:#d4af37;">Back to competitions</a></body></html>');
+    return res.send(renderStatusPage({
+      title: 'Vote Recorded',
+      subtitle: 'Payment successful',
+      message: 'Your vote has been recorded successfully. Thank you for supporting your favorite participant.',
+      actionLabel: 'Back to competitions',
+      actionHref: '/competitions.html',
+      theme: 'success',
+    }));
   } catch (err) {
     console.error('❌ Vote callback error:', err);
-    return res.status(500).send('Payment verification failed.');
+    return res.status(500).send(renderStatusPage({
+      title: 'Verification Failed',
+      subtitle: 'Vote verification failed',
+      message: 'There was an error verifying your vote payment. Please try again or contact support.',
+      actionLabel: 'Back to competitions',
+      actionHref: '/competitions.html',
+      theme: 'error',
+    }));
   }
 });
 
@@ -573,6 +690,14 @@ app.get('/competitions', (req, res) => {
 
 app.get('/competitions.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'competitions.html'));
+});
+
+app.get('/tickets', (req, res) => {
+  res.redirect('/tickets.html');
+});
+
+app.get('/tickets.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'tickets.html'));
 });
 
 app.get('/masked-affairs-bg.png', (req, res) => {
