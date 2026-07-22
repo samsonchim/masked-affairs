@@ -197,7 +197,8 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     name: payload.name,
     department: payload.department || null,
     level: payload.level || null,
-    imageUrl: null, // Will be set after upload
+    imageName: 'pending-image.png',
+    imageUrl: null,
     reason: payload.reason || null,
     receivedAt: new Date().toISOString(),
     votes: 0,
