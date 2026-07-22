@@ -1,4 +1,4 @@
-create table if not exists public.submissions (
+`create table if not exists public.submissions (
   id bigserial primary key,
   category text not null,
   name text not null,
@@ -9,3 +9,4 @@ create table if not exists public.submissions (
   "receivedAt" timestamptz null default now(),
   votes integer null default 0
 );
+`

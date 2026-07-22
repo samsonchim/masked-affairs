@@ -441,8 +441,6 @@ app.get('/api/tickets/callback', async (req, res) => {
         title: 'Verification Failed',
         subtitle: 'Payment verification failed',
         message: 'We could not verify the ticket payment with Paystack. Please try again or contact support.',
-        actionLabel: 'Back to tickets',
-        actionHref: '/tickets.html',
         theme: 'error',
       }));
     }
@@ -452,8 +450,6 @@ app.get('/api/tickets/callback', async (req, res) => {
         title: 'Payment Pending',
         subtitle: 'Payment not completed',
         message: 'Your ticket payment did not complete successfully. Please check your Paystack payment page or try again.',
-        actionLabel: 'Go back to tickets',
-        actionHref: '/tickets.html',
         theme: 'error',
       }));
     }
@@ -468,8 +464,6 @@ app.get('/api/tickets/callback', async (req, res) => {
         title: 'Ticket Error',
         subtitle: 'Ticket details missing',
         message: 'Your payment appears to have succeeded, but we could not find the ticket record. Please contact support with your reference.',
-        actionLabel: 'Back to tickets',
-        actionHref: '/tickets.html',
         theme: 'error',
       }));
     }
@@ -489,12 +483,9 @@ app.get('/api/tickets/callback', async (req, res) => {
       });
     }
 
-    return res.send(renderStatusPage({
+   return res.send(renderStatusPage({
       title: 'Ticket Confirmed',
       subtitle: 'Payment successful',
-      message: 'Your ticket purchase has been confirmed. You can view your ticket details on the tickets page.',
-      actionLabel: 'View my tickets',
-      actionHref: '/tickets.html',
       theme: 'success',
     }));
   } catch (err) {
@@ -503,8 +494,6 @@ app.get('/api/tickets/callback', async (req, res) => {
       title: 'Verification Failed',
       subtitle: 'Ticket verification failed',
       message: 'There was an error verifying your ticket payment. Please try again or contact support.',
-      actionLabel: 'Back to tickets',
-      actionHref: '/tickets.html',
       theme: 'error',
     }));
   }
