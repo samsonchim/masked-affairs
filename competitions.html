@@ -16,15 +16,17 @@
       scroll-behavior: smooth;
     }
 
-    body {
-      font-family: 'Space Grotesk', sans-serif;
-      background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%),
-        url('/masked-affairs-bg.png') center/cover fixed no-repeat;
-      color: #e8e8e8;
-      min-height: 100vh;
-      overflow-x: hidden;
-      padding-bottom: 80px;
-    }
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 0.8) 0%, rgba(26, 20, 20, 0.8) 50%, rgba(15, 15, 15, 0.8) 100%),
+    url('/masked-affairs-bg.png') center/cover fixed no-repeat;
+  color: #e8e8e8;
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: 0; /* Changed: Removed the 80px padding so the footer sits flush */
+  display: flex;     /* Added: Flex column layout forces footer to bottom */
+  flex-direction: column; /* Added */
+}
 
     a {
       color: inherit;
@@ -472,6 +474,122 @@
         margin: 0 auto;
       }
     }
+
+
+
+/* ============ FOOTER STYLES ============ */
+.footer {
+  padding: 16px 12px 12px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  text-align: center;
+  font-size: 11px;
+  color: #999999;
+  line-height: 1.25;
+  margin-top: auto; /* Keeps footer pushed to the bottom when content is short */
+  width: 100%;      /* Added: Ensures full width */
+}
+.footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Reduced vertical gap between sections from 12px to 6px */
+    align-items: center;
+}
+
+.footer-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+
+.footer-label {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #d4af37;
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 1;
+}
+
+.contacts-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.contacts-grid span {
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.footer a {
+    color: #d4af37;
+    text-decoration: none;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.footer a:hover {
+    color: #f0e68c;
+    text-decoration: underline;
+}
+
+.footer-dev {
+    font-size: 10.5px;
+    color: #aaaaaa;
+    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    line-height: 1.25;
+}
+
+.footer-dev strong {
+    color: #e8e8e8;
+    letter-spacing: 0.3px;
+}
+
+.footer-copyright {
+    font-size: 9.5px;
+    color: #666666;
+    max-width: 600px;
+    letter-spacing: 0.2px;
+    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    line-height: 1.2;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 480px) {
+    .footer {
+        padding: 12px 10px 10px;
+        font-size: 10px;
+    }
+    
+    .footer-container {
+        gap: 4px; /* Ultra-tight gap on small mobile screens */
+    }
+
+    .footer-label {
+        font-size: 10px;
+    }
+
+    .contacts-grid {
+        gap: 6px;
+    }
+
+    .footer-dev {
+        font-size: 9.5px;
+    }
+
+    .footer-copyright {
+        font-size: 8.5px;
+    }
+}
   </style>
 </head>
 <body>
@@ -529,7 +647,32 @@
       <div id="participant-grid" class="participant-grid"></div>
     </section>
   </div>
+ <!-- ============ FOOTER ============ -->
+<footer class="footer">
+    <div class="footer-container">
+        <!-- Contact Lines -->
+        <div class="footer-section">
+            <span class="footer-label">Contact:</span>
+            <div class="contacts-grid">
+                <span>CSC: <a href="tel:09078009786">09078009786</a></span>
+                <span>BCH: <a href="tel:08061453269">08061453269</a></span>
+                <span>MME: <a href="tel:0907995327">0907995327</a></span>
+                <span>URP: <a href="tel:09062103442">09062103442</a></span>
+            </div>
+        </div>
 
+        <!-- Tech / Payment Support -->
+        <p class="footer-dev">
+            For technical complaints or payment issues, contact the developer 
+            <strong>ARUSI</strong> (<a href="https://wa.me/2349114172014" target="_blank" rel="noopener noreferrer">wa.me/+2349114172014</a>)
+        </p>
+
+        <!-- Copyright -->
+        <p class="footer-copyright">
+            &copy; 2026 Masked Affairs. All rights reserved. No part of this publication shall be reproduced without the consent of the developer.
+        </p>
+    </div>
+</footer>
   <script>
     const categoryList = document.getElementById('category-list');
     const loadingEl = document.getElementById('loading');
