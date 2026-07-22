@@ -10,7 +10,7 @@ const {
   updateSubmission,
   fetchSubmissionVotes,
   pingSupabase,
-  uploadSubmissionImage,
+  listStorageObjects,
   insertTicket,
   updateTicket,
 } = require('./lib/supabase-rest');
@@ -218,21 +218,20 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
       });
     }
 
-    // Send response immediately, process image and updates in background
+    // Always save the submission first, then handle image upload asynchronously.
     res.json({ ok: true, entry: savedEntry, source });
 
-    // Handle file upload and updates asynchronously without blocking response
     (async () => {
       try {
         if (file) {
-          // Upload to Vercel Blob
-          const blobUrl = await uploadImageToBlob(
-            file.buffer,
-            file.originalname,
-            'submissions'
-          );
+          console.log('📦 Uploading submission image to Vercel Blob', {
+            originalName: file.originalname,
+            size: file.size,
+            source,
+          });
 
-          // Update entry with blob URL
+          const blobUrl = await uploadImageToBlob(file.buffer, file.originalname, 'submissions');
+
           if (source === 'supabase') {
             await updateSubmission(savedEntry.id, { imageUrl: blobUrl });
           } else {
@@ -245,6 +244,13 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
         console.log('✅ Entry saved:', savedEntry.name, `(${source})`);
       } catch (bgErr) {
         console.error('❌ Background processing error:', bgErr.message);
+        if (file && source === 'supabase') {
+          try {
+            await updateSubmission(savedEntry.id, { imageUrl: null, imageName: file.originalname });
+          } catch (updateErr) {
+            console.error('⚠️ Failed to record upload error on submission:', updateErr.message);
+          }
+        }
       }
     })();
   } catch (err) {
