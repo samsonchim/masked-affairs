@@ -5,5 +5,13 @@
       "source": "/api/(.*)",
       "destination": "/api/index"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 30
+    },
+    "api/submit.js": {
+      "maxDuration": 30
+    }
+  }
 }
