@@ -23,9 +23,9 @@ body {
   color: #e8e8e8;
   min-height: 100vh;
   overflow-x: hidden;
-  padding-bottom: 0; /* Changed: Removed the 80px padding so the footer sits flush */
-  display: flex;     /* Added: Flex column layout forces footer to bottom */
-  flex-direction: column; /* Added */
+  padding-bottom: 0;
+  display: flex;    
+  flex-direction: column; 
 }
 
     a {
@@ -305,18 +305,19 @@ body {
     }
 
     .vote-button {
-      margin-top: 16px;
-      padding: 12px 18px;
-      width: fit-content;
+           display: block;       
+      width: 100%;          
+      box-sizing: border-box;
+      margin-top: 10px;
+      padding: 12px 16px;
       border-radius: 999px;
-      border: 1px solid rgba(212, 175, 55, 0.4);
-      background: rgba(212, 175, 55, 0.1);
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+      border: none;
+      background: linear-gradient(90deg, #d4af37, #f4e08e);
+      color: #111;
+      font-weight: 800;
       cursor: pointer;
-      opacity: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .vote-button:hover {
@@ -409,8 +410,10 @@ body {
       font-size: 16px;
     }
 
-    .vote-pay-btn {
-      width: 100%;
+      .vote-pay-btn {
+      display: block;       
+      width: 100%;          
+      box-sizing: border-box;
       margin-top: 10px;
       padding: 12px 16px;
       border-radius: 999px;
@@ -487,15 +490,15 @@ body {
   font-size: 11px;
   color: #999999;
   line-height: 1.25;
-  margin-top: auto; /* Keeps footer pushed to the bottom when content is short */
-  width: 100%;      /* Added: Ensures full width */
+  margin-top: auto; 
+  width: 100%;      
 }
 .footer-container {
     max-width: 800px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 6px; /* Reduced vertical gap between sections from 12px to 6px */
+    gap: 6px; 
     align-items: center;
 }
 
@@ -545,7 +548,7 @@ body {
 .footer-dev {
     font-size: 10.5px;
     color: #aaaaaa;
-    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    margin: 0; 
     line-height: 1.25;
 }
 
@@ -559,7 +562,7 @@ body {
     color: #666666;
     max-width: 600px;
     letter-spacing: 0.2px;
-    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    margin: 0; 
     line-height: 1.2;
 }
 
@@ -571,7 +574,7 @@ body {
     }
     
     .footer-container {
-        gap: 4px; /* Ultra-tight gap on small mobile screens */
+        gap: 4px; 
     }
 
     .footer-label {
@@ -768,45 +771,47 @@ body {
       voteMessage.textContent = '';
     }
 
-    function renderParticipantCard(participant, totalVotes, totalParticipants) {
-      const votes = participant.votes || 0;
-      const barPercent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : totalParticipants > 0 ? Math.round(100 / totalParticipants) : 0;
-      const card = document.createElement('article');
-      card.className = 'participant-card';
-      card.id = `participant-${participant.id}`;
-      const imageSrc = participant.imageUrl || `/uploads/${participant.imageName}`;
+  function renderParticipantCard(participant, totalVotes, totalParticipants) {
+  const votes = participant.votes || 0;
+  const barPercent = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : totalParticipants > 0 ? Math.round(100 / totalParticipants) : 0;
+  const card = document.createElement('article');
+  card.className = 'participant-card';
+  card.id = `participant-${participant.id}`;
+  const imageSrc = participant.imageUrl || `/uploads/${participant.imageName}`;
 
-      const imageHtml = `<div class="participant-media">
-          <img class="participant-image" src="${imageSrc}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-          <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
-        </div>`;
+  const imageHtml = `<div class="participant-media">
+      <img class="participant-image" src="${imageSrc}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+      <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
+    </div>`;
 
-      card.innerHTML = `
-        <div class="participant-details">
-          <div>
-            <div class="participant-name">${participant.name || 'Unnamed'}</div>
-            <div class="participant-meta">${participant.department || 'No department'} · ${participant.level || 'No level'}</div>
-          </div>
+  card.innerHTML = `
+    <div class="participant-details">
+      <div>
+        <div class="participant-name">${participant.name || 'Unnamed'}</div>
+        <div class="participant-meta">${participant.department || 'No department'} · ${participant.level || 'No level'}</div>
+      </div>
 
-          <div class="participant-copy"><strong>Why we should vote:</strong> ${participant.reason || 'No reason provided.'}</div>
+      <div class="participant-copy"><strong>Why we should vote:</strong> ${participant.reason || 'No reason provided.'}</div>
 
-          <div class="vote-summary">
-            <span>Participant votes: ${votes}</span>
-            <span>Category participants: ${totalParticipants}</span>
-          </div>
+      <div class="vote-summary">
+        <span>Participant votes: ${votes}</span>
+        <span>Category participants: ${totalParticipants}</span>
+      </div>
 
-          <div class="progress-track">
-            <div class="progress-bar" style="width: ${barPercent}%;"></div>
-          </div>
-          <div class="participant-meta">Share of category: ${barPercent}%</div>
-          <button class="vote-button" type="button" data-id="${participant.id}">Vote</button>
-        </div>
-        ${imageHtml}
-      `;
+      <div class="progress-track">
+        <div class="progress-bar" style="width: ${barPercent}%;"></div>
+      </div>
+      <div class="participant-meta">Share of category: ${barPercent}%</div>
+    </div>
 
-      card.querySelector('.vote-button').addEventListener('click', () => openVoteModal(participant));
-      return card;
-    }
+    ${imageHtml}
+
+    <button class="vote-button" type="button" data-id="${participant.id}">Vote</button>
+  `;
+
+  card.querySelector('.vote-button').addEventListener('click', () => openVoteModal(participant));
+  return card;
+}
 
     function renderCategoryDetails(category) {
       categoryTitle.textContent = category.name;
