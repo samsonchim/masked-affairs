@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Purchased Tickets</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+    p {
+      color: #4b5563;
+      margin-top: 0;
+      margin-bottom: 24px;
+    }
+    .tickets-grid {
+      display: grid;
+      gap: 18px;
+    }
+    .ticket-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    }
+    .ticket-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: baseline;
+      margin-bottom: 16px;
+    }
+    .ticket-header span {
+      font-size: 0.95rem;
+      color: #6b7280;
+    }
+    .ticket-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    .ticket-detail {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .detail-item {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    .detail-label {
+      display: block;
+      font-size: 0.82rem;
+      color: #6b7280;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .detail-value {
+      font-size: 0.98rem;
+      color: #111827;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+    .empty-state,
+    .error-state {
+      text-align: center;
+      margin-top: 40px;
+      color: #475569;
+    }
+    .source-note {
+      margin-top: 28px;
+      font-size: 0.92rem;
+      color: #6b7280;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      text-decoration: none;
+      color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Purchased Tickets</h1>
+    <p>Review all paid tickets that have been successfully recorded.</p>
+
+    <div id="tickets" class="tickets-grid"></div>
+    <div id="message" class="empty-state"></div>
+    <p id="source" class="source-note"></p>
+    <a href="/" class="back-link">← Back to home</a>
+  </main>
+
+  <script>
+    const ticketsContainer = document.getElementById('tickets');
+    const messageEl = document.getElementById('message');
+    const sourceEl = document.getElementById('source');
+
+    function formatDate(value) {
+      if (!value) return '—';
+      const date = new Date(value);
+      return date.toLocaleString();
+    }
+
+    function renderTicket(ticket) {
+      const card = document.createElement('article');
+      card.className = 'ticket-card';
+
+      card.innerHTML = `
+        <div class="ticket-header">
+          <div>
+            <p class="ticket-title">${ticket.name || 'Unnamed Ticket'}</p>
+            <span>${ticket.ticket_type || 'Ticket'}</span>
+          </div>
+          <div>
+            <span>${ticket.status ? ticket.status.toUpperCase() : 'UNKNOWN'}</span>
+          </div>
+        </div>
+        <div class="ticket-detail">
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">${ticket.email || '—'}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">${ticket.phone || '—'}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Quantity</span>
+            <span class="detail-value">${ticket.quantity || 1}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Amount</span>
+            <span class="detail-value">₦${ticket.amount?.toLocaleString() || '0'}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Reference</span>
+            <span class="detail-value">${ticket.reference || '—'}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Requested</span>
+            <span class="detail-value">${formatDate(ticket.requested_at)}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Confirmed</span>
+            <span class="detail-value">${formatDate(ticket.confirmed_at)}</span>
+          </div>
+        </div>
+      `;
+
+      ticketsContainer.appendChild(card);
+    }
+
+    async function loadTickets() {
+      messageEl.textContent = 'Loading tickets...';
+      sourceEl.textContent = '';
+      ticketsContainer.innerHTML = '';
+
+      try {
+        const response = await fetch('/api/tickets');
+        if (!response.ok) throw new Error('Unable to fetch tickets');
+
+        const payload = await response.json();
+        const tickets = payload.tickets || [];
+
+        if (tickets.length === 0) {
+          messageEl.textContent = 'No purchased tickets found yet.';
+          sourceEl.textContent = payload.warning
+            ? `Data source: ${payload.source}. ${payload.warning}`
+            : `Data source: ${payload.source}.`;
+          return;
+        }
+
+        messageEl.textContent = '';
+        tickets.forEach(renderTicket);
+        sourceEl.textContent = payload.warning
+          ? `Data source: ${payload.source}. ${payload.warning}`
+          : `Data source: ${payload.source}.`;
+      } catch (err) {
+        messageEl.className = 'error-state';
+        messageEl.textContent = 'Failed to load tickets. Please try again later.';
+        console.error(err);
+      }
+    }
+
+    loadTickets();
+  </script>
+</body>
+</html>

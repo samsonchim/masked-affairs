@@ -6,6 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const {
   fetchSubmissions,
+  fetchTickets,
   insertSubmission,
   updateSubmission,
   fetchSubmissionVotes,
@@ -19,6 +20,7 @@ const {
   appendLocalSubmission,
   updateLocalSubmission,
   getLocalSubmission,
+  readLocalTickets,
   appendLocalTicket,
   updateLocalTicket,
   getLocalTicket,
@@ -120,6 +122,16 @@ async function loadSubmissionRows() {
   }
 }
 
+async function loadTicketRows() {
+  try {
+    const rows = await fetchTickets();
+    return { rows, source: 'supabase' };
+  } catch (err) {
+    console.error('⚠️ Supabase unavailable, using local tickets fallback:', err.message);
+    return { rows: readLocalTickets(), source: 'local', error: err.message };
+  }
+}
+
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
@@ -181,6 +193,29 @@ app.get('/api/storage/list', async (req, res) => {
   } catch (err) {
     console.error('❌ Storage list error:', err);
     return res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.get('/api/tickets', async (req, res) => {
+  try {
+    const result = await Promise.race([
+      loadTicketRows(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase took too long')), 5000)),
+    ]).catch(() => ({ rows: readLocalTickets(), source: 'local', error: 'Supabase timeout - using cached data' }));
+
+    const tickets = Array.isArray(result.rows)
+      ? result.rows.filter((ticket) => String(ticket.status).toLowerCase() === 'paid')
+      : [];
+
+    return res.json({
+      ok: true,
+      tickets,
+      source: result.source,
+      warning: result.source === 'local' ? result.error : undefined,
+    });
+  } catch (err) {
+    console.error('❌ Error fetching tickets:', err);
+    return res.status(500).json({ error: 'Failed to load tickets' });
   }
 });
 
