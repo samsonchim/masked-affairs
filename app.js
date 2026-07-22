@@ -113,11 +113,14 @@ function buildCategories(rows, categoryFilter) {
 }
 
 function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, theme = 'success' }) {
-  const accent = theme === 'success' ? '#0f766e' : '#b91c1c';
   const bg = theme === 'success' ? '#ecfdf5' : '#fef2f2';
   const text = theme === 'success' ? '#065f46' : '#991b1b';
   const buttonBg = theme === 'success' ? '#14b8a6' : '#ef4444';
   const buttonHover = theme === 'success' ? '#0f766e' : '#dc2626';
+
+  const actionBtnHtml = actionLabel && actionHref
+    ? `<a class="btn" href="${actionHref}">${actionLabel}</a>`
+    : '';
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -142,9 +145,9 @@ function renderStatusPage({ title, subtitle, message, actionLabel, actionHref, t
   <section class="page">
     <span class="badge">${title}</span>
     <h1 class="title">${subtitle}</h1>
-    <p class="message">${message}</p>
+    <p class="message">${message || ''}</p>
     <div class="actions">
-      <a class="btn" href="${actionHref}">${actionLabel}</a>
+      ${actionBtnHtml}
       <a class="btn secondary" href="/">Return home</a>
     </div>
   </section>
@@ -199,7 +202,6 @@ app.get('/api/competitions', async (req, res) => {
   const categoryFilter = req.query.category;
 
   try {
-    // Use a timeout race: if Supabase takes >5 seconds, return local data instead
     const result = await Promise.race([
       loadSubmissionRows(),
       new Promise((_, reject) =>
@@ -224,7 +226,6 @@ app.get('/api/competitions', async (req, res) => {
   }
 });
 
-// Debug: list objects in Supabase storage bucket (requires SUPABASE configured)
 app.get('/api/storage/list', async (req, res) => {
   const prefix = req.query.prefix || '';
   try {
@@ -483,9 +484,10 @@ app.get('/api/tickets/callback', async (req, res) => {
       });
     }
 
-   return res.send(renderStatusPage({
+    return res.send(renderStatusPage({
       title: 'Ticket Confirmed',
       subtitle: 'Payment successful',
+      message: 'Your ticket purchase has been confirmed successfully.',
       theme: 'success',
     }));
   } catch (err) {
@@ -583,12 +585,12 @@ app.get('/api/vote/callback', async (req, res) => {
     }
 
     if (!verifyResponse.ok || !verifyData.status) {
-     return res.send(renderStatusPage({
-      title: 'Ticket Confirmed',
-      subtitle: 'Payment successful',
-      message: 'Your ticket purchase has been confirmed. You can view your ticket details on the tickets page.',
-      theme: 'success',
-    }));
+      return res.status(500).send(renderStatusPage({
+        title: 'Verification Failed',
+        subtitle: 'Payment verification failed',
+        message: 'We could not verify the vote payment with Paystack. Please try again or contact support.',
+        theme: 'error',
+      }));
     }
 
     if (verifyData.data?.status !== 'success') {
