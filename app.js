@@ -9,6 +9,8 @@ const { createClient } = require('@supabase/supabase-js');
 // Initialize Supabase client
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
+const SUPABASE_STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET;
+const IS_VERCEL = process.env.VERCEL === '1';
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
   throw new Error('❌ SUPABASE_URL and SUPABASE_KEY environment variables are required!');
@@ -48,10 +50,52 @@ app.use(express.static(path.join(__dirname)));
 
 console.log('✅ Supabase initialized and ready');
 console.log(`📝 Using project: ${SUPABASE_URL}`);
+if (SUPABASE_STORAGE_BUCKET) {
+  console.log(`🖼️ Using Supabase storage bucket: ${SUPABASE_STORAGE_BUCKET}`);
+} else if (IS_VERCEL) {
+  console.warn('⚠️ SUPABASE_STORAGE_BUCKET is not set. Uploaded images will not persist on Vercel.');
+}
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY || 'sk_test_6d1f717865fb753a93eee779f8e183b2d97ea923';
 const PAYSTACK_PUBLIC_KEY = process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_6afb7c2036136279fc527def931eab4bb37e630c';
 const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+
+function buildStoredImageUrl(imageName) {
+  if (!imageName || imageName === 'pending-image.png') return null;
+  if (SUPABASE_STORAGE_BUCKET) {
+    const { data } = supabase.storage.from(SUPABASE_STORAGE_BUCKET).getPublicUrl(imageName);
+    return data?.publicUrl || null;
+  }
+  return `/uploads/${imageName}`;
+}
+
+async function persistUploadedImage(savedEntryId, file) {
+  const extension = path.extname(file.originalname).toLowerCase() || '.png';
+  const imageName = `${savedEntryId}${extension}`;
+
+  if (SUPABASE_STORAGE_BUCKET) {
+    const { error } = await supabase.storage
+      .from(SUPABASE_STORAGE_BUCKET)
+      .upload(imageName, file.buffer, {
+        contentType: file.mimetype || 'application/octet-stream',
+        upsert: true,
+      });
+
+    if (error) {
+      throw new Error(`Supabase storage upload failed: ${error.message}`);
+    }
+
+    return imageName;
+  }
+
+  if (IS_VERCEL) {
+    throw new Error('File uploads need SUPABASE_STORAGE_BUCKET in production.');
+  }
+
+  const imagePath = path.join(UPLOAD_DIR, imageName);
+  await fs.promises.writeFile(imagePath, file.buffer);
+  return imageName;
+}
 
 app.post('/api/submit', upload.single('image'), async (req, res) => {
   const payload = req.body || {};
@@ -82,14 +126,10 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     }
 
     const savedEntry = data[0];
-    const finalImageName = `${savedEntry.id}.png`;
+    const finalImageName = file ? null : `${savedEntry.id}.png`;
 
     if (file) {
-      const extension = path.extname(file.originalname).toLowerCase() || '.png';
-      const imageName = `${savedEntry.id}${extension}`;
-      const imagePath = path.join(UPLOAD_DIR, imageName);
-
-      await fs.promises.writeFile(imagePath, file.buffer);
+      const imageName = await persistUploadedImage(savedEntry.id, file);
 
       const { data: updatedData, error: updateError } = await supabase
         .from('submissions')
@@ -121,6 +161,7 @@ app.post('/api/submit', upload.single('image'), async (req, res) => {
     }
 
     console.log('✅ Entry saved:', savedEntry.name);
+    savedEntry.imageUrl = buildStoredImageUrl(savedEntry.imageName);
     return res.json({ ok: true, entry: savedEntry });
   } catch (err) {
     console.error('❌ Error saving submission:', err);
@@ -298,6 +339,7 @@ app.get('/api/competitions', async (req, res) => {
         department: row.department,
         level: row.level,
         imageName: row.imageName,
+        imageUrl: buildStoredImageUrl(row.imageName),
         reason: row.reason,
         votes,
         receivedAt: row.receivedAt,

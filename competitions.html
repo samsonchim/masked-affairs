@@ -632,10 +632,15 @@
       card.className = 'participant-card';
       card.id = `participant-${participant.id}`;
 
-      const imageHtml = `<div class="participant-media">
-          <img class="participant-image" src="/uploads/${participant.imageName}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
-          <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
-        </div>`;
+      const imageSrc = participant.imageUrl || (participant.imageName ? `/uploads/${participant.imageName}` : '');
+      const imageHtml = imageSrc
+        ? `<div class="participant-media">
+            <img class="participant-image" src="${imageSrc}" alt="${participant.name || 'Participant'}" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+            <div class="image-fallback" style="display:none;">${buildInitials(participant.name)}</div>
+          </div>`
+        : `<div class="participant-media">
+            <div class="image-fallback" style="display:grid;">${buildInitials(participant.name)}</div>
+          </div>`;
 
       card.innerHTML = `
         <div class="participant-details">
