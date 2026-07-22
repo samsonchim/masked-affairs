@@ -21,75 +21,157 @@
             min-height: 100vh;
         }
 
-        /* ============ HEADER ============ */
-        .header {
-            padding: 30px 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(10px);
-            position: relative;
-            z-index: 100;
-        }
+       /* ============ HEADER ============ */
+/* ============ HEADER ============ */
+.header {
+    padding: 20px 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 100;
+}
 
-        .logo {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 32px;
-            font-weight: 700;
-            letter-spacing: 4px;
-            color: #d4af37;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
+.logo-subtitle {
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 600;
+    font-family: 'Oswald', sans-serif;
+}
 
-        .logo-subtitle {
-            font-size: 13px;
-            letter-spacing: 2px;
-            color: #888;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            font-weight: 600;
-            font-family: 'Oswald', sans-serif;
-        }
+/* Department Logos Row - Space Completely Removed */
+.department-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0; /* No space between logos */
+    margin-bottom: 10px;
+}
 
-        .organization-info {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 15px;
-            font-size: 11px;
-            letter-spacing: 1px;
-            color: #888;
-            font-family: 'Oswald', sans-serif;
-            font-weight: 600;
-        }
+.dept-logo {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
 
-        .org-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
+/* Organization Info Row - Single Line everywhere */
+.organization-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap; /* Forces single row on mobile */
+    white-space: nowrap;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    color: #888;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    max-width: 100%;
+    overflow-x: auto; /* Allows smooth horizontal swipe if screen is very narrow */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+}
 
-        .org-item::before {
-            content: '•';
-            color: #d4af37;
-            font-weight: bold;
-        }
+/* Hide scrollbar for Webkit browsers (Chrome/Safari) */
+.organization-info::-webkit-scrollbar {
+    display: none;
+}
 
-        .org-item:first-child::before {
-            content: '';
-        }
+.org-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0; /* Prevents text from shrinking awkwardly */
+}
 
-        .university-name {
-            font-size: 11px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #999;
-            font-weight: 600;
-            font-family: 'Oswald', sans-serif;
-        }
+/* Gold bullet separator between items */
+.org-item::before {
+    content: '•';
+    color: #d4af37;
+    font-weight: bold;
+}
 
+.org-item:first-child::before {
+    content: '';
+}
+
+.university-name {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 600;
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 480px) {
+    .dept-logo {
+        width: 32px;
+        height: 32px;
+    }
+
+    .organization-info {
+        font-size: 9.5px; /* Slightly tighter text on mobile screens */
+        gap: 5px;
+    }
+
+    .org-item {
+        gap: 5px;
+    }
+
+    .university-name {
+        font-size: 10px;
+    }
+}
+
+/* Gold bullet separator between items */
+.org-item::before {
+    content: '•';
+    color: #d4af37;
+    font-weight: bold;
+}
+
+.org-item:first-child::before {
+    content: '';
+}
+
+.university-name {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #999;
+    font-weight: 600;
+    font-family: 'Oswald', sans-serif;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 480px) {
+    .department-logos {
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .dept-logo {
+        width: 30px;
+        height: 30px;
+    }
+
+    .organization-info {
+        gap: 6px;
+    }
+    
+    .org-item {
+        gap: 6px;
+    }
+}
         /* ============ HERO SECTION ============ */
         .hero {
             position: relative;
@@ -723,15 +805,16 @@
 
 
         /* ============ FOOTER STYLES ============ */
+/* ============ FOOTER STYLES ============ */
 .footer {
-    padding: 30px 20px 20px;
+    padding: 16px 12px 12px; /* Tightened container padding */
     background: rgba(10, 10, 10, 0.85);
     backdrop-filter: blur(10px);
     border-top: 1px solid rgba(212, 175, 55, 0.2);
     text-align: center;
     font-size: 11px;
     color: #999999;
-    line-height: 1.6;
+    line-height: 1.25; /* Reduced line height across all text */
     margin-top: auto;
 }
 
@@ -740,7 +823,7 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px; /* Reduced vertical gap between sections from 12px to 6px */
     align-items: center;
 }
 
@@ -749,23 +832,27 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    margin: 0;
 }
 
 .footer-label {
     font-family: 'Oswald', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.8px;
     color: #d4af37;
     font-weight: 600;
     font-size: 11px;
+    line-height: 1;
 }
 
 .contacts-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 12px;
+    gap: 8px;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .contacts-grid span {
@@ -784,62 +871,76 @@
 }
 
 .footer-dev {
-    font-size: 11px;
+    font-size: 10.5px;
     color: #aaaaaa;
+    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    line-height: 1.25;
 }
 
 .footer-dev strong {
     color: #e8e8e8;
-    letter-spacing: 0.5px;
-}
-
-.footer-copyright {
-    font-size: 10px;
-    color: #666666;
-    max-width: 600px;
     letter-spacing: 0.3px;
 }
 
-/* Responsive tweaks */
+.footer-copyright {
+    font-size: 9.5px;
+    color: #666666;
+    max-width: 600px;
+    letter-spacing: 0.2px;
+    margin: 0; /* Ensures paragraph margins don't introduce spacing */
+    line-height: 1.2;
+}
+
+/* Mobile Tweaks */
 @media (max-width: 480px) {
     .footer {
-        padding: 24px 15px 15px;
+        padding: 12px 10px 10px;
         font-size: 10px;
     }
     
+    .footer-container {
+        gap: 4px; /* Ultra-tight gap on small mobile screens */
+    }
+
     .footer-label {
         font-size: 10px;
     }
 
     .contacts-grid {
-        gap: 8px;
+        gap: 6px;
+    }
+
+    .footer-dev {
+        font-size: 9.5px;
     }
 
     .footer-copyright {
-        font-size: 9px;
+        font-size: 8.5px;
     }
 }
     </style>
 </head>
 <body>
     <!-- ============ HEADER ============ -->
-    <header class="header">
-        <div class="logo">UN</div>
-        <div class="logo-subtitle">Unsaid Production</div>
-        
-        <div class="organization-info">
-            <div class="org-item">Office of the Director of Socials</div>
-        </div>
-        
-        <div class="organization-info" style="margin-bottom: 12px;">
-            <div class="org-item">CSC (Unsaid)</div>
-            <div class="org-item">BCH (CONFIDENCE)</div>
-            <div class="org-item">MME (BU-KING)</div>
-            <div class="org-item">URP (INVESTOR VIBES)</div>
-        </div>
-        
-        <div class="university-name">Federal University of Technology, Owerri</div>
-    </header>
+   <header class="header">
+    <div class="logo-subtitle">Unsaid Production Presents</div>
+
+    <!-- Department Logos -->
+    <div class="department-logos">
+        <img src="logos/csc.png" alt="CSC Logo" class="dept-logo">
+        <img src="logos/bch.png" alt="BCH Logo" class="dept-logo">
+        <img src="logos/mme.png" alt="MME Logo" class="dept-logo">
+        <img src="logos/urp.png" alt="URP Logo" class="dept-logo">
+    </div>
+    
+    <!-- All Org Items in a Single Wrapped Row -->
+    <div class="organization-info">
+        <div class="org-item">Office of the Director of Socials <br></div>
+       
+    </div>
+     <div class="university-name">CSC (Unsaid)•BCH (CONFIDENCE)•MME (BU-KING)•URP (INVESTOR VIBES)</div>
+    <div class="university-name">Federal University of Technology, Owerri</div>
+</header>
 
     <!-- ============ HERO SECTION ============ -->
     <section class="hero">

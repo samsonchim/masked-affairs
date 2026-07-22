@@ -535,7 +535,7 @@ app.get('/api/tickets/callback', async (req, res) => {
       return res.send(renderStatusPage({
         title: 'Payment Pending',
         subtitle: 'Payment not completed',
-        message: 'Your ticket payment did not complete successfully. Please check your Paystack payment page or try again.',
+        message: 'Your ticket payment did not complete successfully. Might not be your fault tho.',
         theme: 'error',
       }));
     }
@@ -683,8 +683,6 @@ app.get('/api/vote/callback', async (req, res) => {
         title: 'Payment Pending',
         subtitle: 'Payment not completed',
         message: 'Your vote payment did not complete successfully. Please try again or verify your transaction in Paystack.',
-        actionLabel: 'Back to competitions',
-        actionHref: '/competitions.html',
         theme: 'error',
       }));
     }
@@ -700,8 +698,6 @@ app.get('/api/vote/callback', async (req, res) => {
         title: 'Vote Error',
         subtitle: 'Vote details missing',
         message: 'Your payment succeeded, but we could not resolve the vote information. Please contact support with your payment reference.',
-        actionLabel: 'Back to competitions',
-        actionHref: '/competitions.html',
         theme: 'error',
       }));
     }
@@ -722,8 +718,6 @@ app.get('/api/vote/callback', async (req, res) => {
           title: 'Vote Error',
           subtitle: 'Vote could not be recorded',
           message: 'Your payment succeeded, but we could not record the vote. Please contact support or try again.',
-          actionLabel: 'Back to competitions',
-          actionHref: '/competitions.html',
           theme: 'error',
         }));
       }
@@ -735,8 +729,6 @@ app.get('/api/vote/callback', async (req, res) => {
       title: 'Vote Recorded',
       subtitle: 'Payment successful',
       message: 'Your vote has been recorded successfully. Thank you for supporting your favorite participant.',
-      actionLabel: 'Back to competitions',
-      actionHref: '/competitions.html',
       theme: 'success',
     }));
   } catch (err) {
@@ -745,8 +737,6 @@ app.get('/api/vote/callback', async (req, res) => {
       title: 'Verification Failed',
       subtitle: 'Vote verification failed',
       message: 'There was an error verifying your vote payment. Please try again or contact support.',
-      actionLabel: 'Back to competitions',
-      actionHref: '/competitions.html',
       theme: 'error',
     }));
   }
