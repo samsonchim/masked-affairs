@@ -227,7 +227,45 @@
             font-weight: 700;
             font-family: 'Oswald', sans-serif;
         }
+.quick-add-chips {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
 
+.chip-label {
+    font-size: 10.5px;
+    color: #888888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.dept-chip {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #d4af37;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dept-chip:hover {
+    background: rgba(212, 175, 55, 0.25);
+    border-color: #d4af37;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.dept-chip:active {
+    transform: translateY(0);
+}
         .main-title {
             font-family: 'Bebas Neue', sans-serif;
             font-size: clamp(52px, 12vw, 160px);
@@ -994,7 +1032,7 @@
 
             <div class="cta-container">
                 <button class="btn btn-secondary" id="buyTicketBtn">Buy Ticket</button>
-                <button class="btn btn-primary" id="enterCompetitionBtn">Enter Competition</button>
+                <button class="btn btn-primary" id="enterCompetitionBtn">GET AWARD</button>
                  <button class="btn btn-secondary" id="checkCompetitionsBtn">Vote</button>
             </div>
         </div>
@@ -1053,7 +1091,7 @@
             
             <!-- Stage 1: Category Selection -->
             <div id="stage1" class="competition-stage">
-                <p class="stage-title">Choose the category you want to participate in:</p>
+                <p class="stage-title">Choose the category you want award in:</p>
                 <div class="categories-grid" id="categoriesGrid"></div>
                 <button class="btn btn-secondary" id="nextStageBtn" style="width: 100%; margin-top: 20px;" disabled>
                     Next
@@ -1069,9 +1107,18 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Department</label>
-                        <input type="text" class="form-control" id="participantDept" placeholder="Your department or faculty" required>
-                    </div>
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" id="participantDept" placeholder="Your department or faculty" required>
+                            
+                            <!-- Quick Add Chips -->
+                            <div class="quick-add-chips">
+                                <span class="chip-label">Quick select:</span>
+                                <button type="button" class="dept-chip" onclick="selectDepartment('CSC')">CSC</button>
+                                <button type="button" class="dept-chip" onclick="selectDepartment('BCH')">BCH</button>
+                                <button type="button" class="dept-chip" onclick="selectDepartment('MME')">MME</button>
+                                <button type="button" class="dept-chip" onclick="selectDepartment('URP')">URP</button>
+                            </div>
+                        </div>
 
                     <div class="form-group">
                         <label class="form-label">Level</label>
@@ -1152,6 +1199,12 @@
     </div>
 </footer>
     <script>
+
+        function selectDepartment(deptCode) {
+    const deptInput = document.getElementById('participantDept');
+    deptInput.value = deptCode;
+    deptInput.focus();
+}
         // Competition categories
         const categories = {
             'STUDENT CATEGORIES': [
